@@ -15,7 +15,7 @@
 
 import copy as copy
 import pygame as pg
-from queue import Queue as Q
+#from queue import Queue as Q
 
 #####################################################
 ##### Animal Class ##################################
