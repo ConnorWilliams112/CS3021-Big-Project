@@ -1,5 +1,5 @@
 ############################################################################################
-# queue.py
+# my_queue.py
 # 
 # Last edit: Michael Schnabel
 # Last updated: 03 Mar 2026
