@@ -1,0 +1,91 @@
+# Animal.py
+# Animals module of CS3021 Big Project 
+#
+# Contains Animal base class with inheritance for duck types + movement algorithms + dead/alive flags       && Curt if time
+# Photos? Hitbox?
+#
+# Winter 2026
+# Last updated: 4 March 2026
+#
+# Author: Capt Connor Williams
+
+#####################################################
+##### IMPORTS BLOCK #################################
+#####################################################
+
+import copy as copy
+import pygame as pg
+import random as random
+import math as math
+
+try:
+    Duck_Open = pg.image.load("Images/Duck_Open.png").convert_alpha()
+    Duck_Closed = pg.image.load("Images/Duck_Closed.png").convert_alpha()
+    Duck_Dead = pg.image.load("Images/Duck_Dead.png").convert_alpha()
+    Armored_Duck_Open = pg.image.load("Images/Armored_Duck_Open.png").convert_alpha()
+    Armored_Duck_Closed = pg.image.load("Images/Armored_Duck_Closed.png").convert_alpha()
+    Armored_Duck_Exploded = pg.image.load("Images/Armored_Duck_Exploded.png").convert_alpha()
+except pg.error as e:
+    print(f"Error loading image: {e}")
+    exit() 
+
+#####################################################
+##### Animal Class ##################################
+#####################################################
+class Animal(pg.sprite.Sprite):
+
+    def __init__(self, level = 1):
+        super().__init__()
+        self.life = True        #Using to equal alive/dead status of animal
+        self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
+
+    def update(self):
+        newpos = self.calcnewpos(self.rect,self.level)          ##### In work #####
+        self.rect = newpos
+
+    def calcnewpos(self,rect,level):
+        # Simplified movement algorithm based on level
+        angle = random.uniform(0, 2 * math.pi)
+        z = level * 2  # Speed increases with level
+        (dx,dy) = (z*math.cos(angle),z*math.sin(angle))
+        return rect.move(dx,dy)
+
+
+#####################################################
+##### Normal Duck Class #############################
+#####################################################
+
+class NormalDuck(Animal):
+
+    def __init__(self):
+        super().__init__()
+        self.image = Duck_Open
+        self.rect = self.image.get_rect()
+    
+    
+    
+
+#####################################################
+##### Super Duck Class ##############################
+#####################################################
+
+class SuperDuck(Animal):
+
+    def __init__(self):
+        super().__init__()
+        self.image = Armored_Duck_Open
+        self.rect = self.image.get_rect()
+    
+
+#####################################################
+##### MAIN BLOCK ####################################
+#####################################################
+
+if __name__ == "__main__":
+    
+    #Develop some test cases to demonstrate functionality of the Animal and Duck classes
+    #Functionality of movement algorithms, displaying ducks, later killing w/ clicks, etc.
+
+    # Create instances of NormalDuck and SuperDuck
+    normal_duck = NormalDuck("Daffy", 5, "Healthy")
+    super_duck = SuperDuck("SuperDaffy", 3, "Healthy")
