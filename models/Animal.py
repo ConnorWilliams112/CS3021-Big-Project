@@ -15,55 +15,39 @@
 
 import copy as copy
 import pygame as pg
+import random as random
+import math as math
+
+try:
+    Duck_Open = pg.image.load("Images/Duck_Open.png").convert_alpha()
+    Duck_Closed = pg.image.load("Images/Duck_Closed.png").convert_alpha()
+    Duck_Dead = pg.image.load("Images/Duck_Dead.png").convert_alpha()
+    Armored_Duck_Open = pg.image.load("Images/Armored_Duck_Open.png").convert_alpha()
+    Armored_Duck_Closed = pg.image.load("Images/Armored_Duck_Closed.png").convert_alpha()
+    Armored_Duck_Exploded = pg.image.load("Images/Armored_Duck_Exploded.png").convert_alpha()
+except pg.error as e:
+    print(f"Error loading image: {e}")
+    exit() 
 
 #####################################################
 ##### Animal Class ##################################
 #####################################################
-class Animal(object):
+class Animal(pg.sprite.Sprite):
 
-    def __init__(self, name, species, age, health):
-        self.name = name
-        self.species = species
-        self.age = age
-        self.health = health
-        self.is_alive = True
+    def __init__(self):
+        super().__init__()
+        self.life = True        #Using to equal alive/dead status of animal
+    
 
-    def move(self):
-        print(f"{self.name} the {self.species} is moving.")
-
-    def eat(self):
-        print(f"{self.name} the {self.species} is eating.")
-
-    def sleep(self):
-        print(f"{self.name} the {self.species} is sleeping.")
-
-#^^^ Inline colleague slop base
-
-#####################################################
-##### Duck Class ####################################
-#####################################################
-class Duck(Animal):
-
-    def __init__(self, name, age, health, duck_type):
-        super().__init__(name, "Duck", age, health)
-        self.duck_type = duck_type
-
-    def quack(self):
-        print(f"{self.name} the {self.duck_type} duck says: Quack!")
-
-    def move(self):
-        print(f"{self.name} the {self.duck_type} duck is waddling.")
-
-#^^^ Inline colleague slop duck
 
 #####################################################
 ##### Normal Duck Class #############################
 #####################################################
 
-class NormalDuck(Duck):
+class NormalDuck(Animal):
 
     def __init__(self, name, age, health):
-        super().__init__(name, age, health, "Normal")
+        super().__init__(name, "Normal Duck", age, health)
 
     def move(self):
         print(f"{self.name} the Normal duck is waddling.")
@@ -72,10 +56,10 @@ class NormalDuck(Duck):
 ##### Super Duck Class ##############################
 #####################################################
 
-class SuperDuck(Duck):
+class SuperDuck(Animal):
 
     def __init__(self, name, age, health):
-        super().__init__(name, age, health, "Super")
+        super().__init__(name, "Super Duck", age, health)
 
     def move(self):
         print(f"{self.name} the Super duck is flying!")
