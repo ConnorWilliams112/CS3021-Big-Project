@@ -21,8 +21,10 @@ class HashTable(object):
 
     __hash__ = None     # HashTable is mutable
 
-    def __init__(self, capacity=16):
-        '''Constructor. Allocates an empty hash table with the given number of buckets.'''
+    def __init__(self, capacity=17):
+        '''Constructor. Allocates an empty hash table with the given number of buckets.
+        
+        Default capacity is 17 to accomodate 10 scores in high score table.'''
 
         self.__capacity = capacity
         self.__data = [[] for _ in range(self.__capacity)]
