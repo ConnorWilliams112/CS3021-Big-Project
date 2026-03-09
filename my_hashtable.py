@@ -9,6 +9,7 @@
 # IMPORTS & MACROS
 
 import copy
+import unittest
 
 ############################################################################################
 
@@ -54,8 +55,6 @@ class HashTable(object):
         '''Inserts a key-value pair. Overwrites the value if key already exists.
         
         Note: caller is responsible for score comparison in score.py before calling set'''
-
-        # Note
 
         if key is None:
             raise ValueError("Key cannot be None")
@@ -161,5 +160,121 @@ class HashTable(object):
     #__ne__       not implemented
     #__deepcopy__ accepting default implementation
 
+############################################################################################
+# UNIT TESTS
 
-    '''UNIT TESTS: DEVELOP BELOW'''
+class TestHashTable(unittest.TestCase):
+
+    def setUp(self):
+        '''Fresh HashTable before each test.'''
+        self.ht = HashTable()
+
+    # init
+
+    def test_init_default_capacity(self):
+        self.assertEqual(self.ht.size, 0)
+        self.assertEqual(self.ht.capacity, 17)
+        self.assertTrue(self.ht.empty())
+
+    def test_init_custom_capacity(self):
+        ht = HashTable(capacity=5)
+        self.assertEqual(ht.capacity, 5)
+
+    # set / get
+
+    def test_set_and_get(self):
+        self.ht.set("alice", 100)
+        self.assertEqual(self.ht.get("alice"), 100)
+        self.assertEqual(self.ht.size, 1)
+
+    def test_set_overwrites_existing_key(self):
+        self.ht.set("alice", 100)
+        self.ht.set("alice", 200)
+        self.assertEqual(self.ht.get("alice"), 200)
+        self.assertEqual(self.ht.size, 1)   # size must not grow on overwrite
+
+    def test_get_missing_key_returns_none(self):
+        self.assertIsNone(self.ht.get("ghost"))
+
+    def test_set_none_key_raises(self):
+        with self.assertRaises(ValueError):
+            self.ht.set(None, 42)
+
+    def test_get_none_key_raises(self):
+        with self.assertRaises(ValueError):
+            self.ht.get(None)
+
+    # delete
+
+    def test_delete_removes_key(self):
+        self.ht.set("alice", 100)
+        self.ht.delete("alice")
+        self.assertEqual(self.ht.size, 0)
+        self.assertIsNone(self.ht.get("alice"))
+        self.assertFalse(self.ht.has_key("alice"))
+
+    def test_delete_missing_key_raises(self):
+        with self.assertRaises(KeyError):
+            self.ht.delete("ghost")
+
+    def test_delete_none_key_raises(self):
+        with self.assertRaises(ValueError):
+            self.ht.delete(None)
+
+    # has_key
+
+    def test_has_key_present(self):
+        self.ht.set("alice", 100)
+        self.assertTrue(self.ht.has_key("alice"))
+
+    def test_has_key_absent(self):
+        self.assertFalse(self.ht.has_key("bob"))
+
+    def test_has_key_none(self):
+        self.assertFalse(self.ht.has_key(None))
+
+    # keys / values
+
+    def test_keys_and_values(self):
+        self.ht.set("alice", 100)
+        self.ht.set("bob", 200)
+        self.assertEqual(sorted(self.ht.keys()), ["alice", "bob"])
+        self.assertEqual(sorted(self.ht.values()), [100, 200])
+
+    # empty
+
+    def test_empty_on_new_table(self):
+        self.assertTrue(self.ht.empty())
+
+    def test_not_empty_after_insert(self):
+        self.ht.set("alice", 100)
+        self.assertFalse(self.ht.empty())
+
+    # __str__
+
+    def test_str_empty(self):
+        self.assertEqual(str(self.ht), "HashTable: {}")
+
+    def test_str_nonempty(self):
+        self.ht.set("alice", 100)
+        result = str(self.ht)
+        self.assertIn("alice", result)
+        self.assertIn("100", result)
+
+    # copy
+
+    def test_copy_contains_same_data(self):
+        self.ht.set("alice", 100)
+        ht2 = self.ht.copy()
+        self.assertEqual(ht2.get("alice"), 100)
+        self.assertEqual(ht2.size, 1)
+
+    def test_copy_is_independent(self):
+        self.ht.set("alice", 100)
+        ht2 = self.ht.copy()
+        ht2.set("bob", 200)
+        self.assertFalse(self.ht.has_key("bob"))
+
+
+if __name__ == '__main__':
+    unittest.main()
