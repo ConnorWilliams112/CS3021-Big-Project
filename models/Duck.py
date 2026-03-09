@@ -1,11 +1,11 @@
-# Animal.py
-# Animals module of CS3021 Big Project 
+# Duck.py
+# Ducks module of CS3021 Big Project 
 #
-# Contains Animal base class with inheritance for duck types + movement algorithms + dead/alive flags       && Curt if time
-# Photos? Hitbox?
+# Contains Duck base class with inheritance for duck types + movement algorithms + dead/alive flags       && Curt if time
+# 
 #
 # Winter 2026
-# Last updated: 4 March 2026
+# Last updated: 9 March 2026
 #
 # Author: Capt Connor Williams
 
@@ -30,14 +30,17 @@ except pg.error as e:
     exit() 
 
 #####################################################
-##### Animal Class ##################################
+##### Duck Class ##################################
 #####################################################
-class Animal(pg.sprite.Sprite):
+class Duck(pg.sprite.Sprite):
 
-    def __init__(self, level = 1):
+    def __init__(self, level):
         super().__init__()
         self.life = True        #Using to equal alive/dead status of animal
         self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
+        self.duck_open = pg.transform.scale(Duck_Open, (50, 50))
+        self.duck_closed = pg.transform.scale(Duck_Closed, (50, 50))
+        self.duck_dead = pg.transform.scale(Duck_Dead, (50, 50))
 
     def update(self):
         newpos = self.calcnewpos(self.rect,self.level)          ##### In work #####
@@ -55,26 +58,45 @@ class Animal(pg.sprite.Sprite):
 ##### Normal Duck Class #############################
 #####################################################
 
-class NormalDuck(Animal):
+class NormalDuck(Duck):
 
-    def __init__(self):
-        super().__init__()
-        self.image = Duck_Open
+    def __init__(self, level):
+        super().__init__(level)
+        # Set default image to open state
+        self.image = self.duck_open
         self.rect = self.image.get_rect()
     
+    def update(self):
+        if not self.life:
+            self.image = self.duck_dead
+        elif self.image == self.duck_open:
+            self.image = self.duck_closed
+        else:
+            self.image = self.duck_open
+        return super().update()
     
+    def kill(self):
     
-
 #####################################################
 ##### Super Duck Class ##############################
 #####################################################
 
-class SuperDuck(Animal):
+class SuperDuck(Duck):
 
-    def __init__(self):
-        super().__init__()
-        self.image = Armored_Duck_Open
+    def __init__(self, level):
+        super().__init__(level)
+        # Create sprite instances from armored duck images
+        self.armored_duck_open = pg.transform.scale(Armored_Duck_Open, (50, 50))
+        self.armored_duck_closed = pg.transform.scale(Armored_Duck_Closed, (50, 50))
+        self.armored_duck_exploded = pg.transform.scale(Armored_Duck_Exploded, (50, 50))
+        
+        # Set default image to open state
+        self.image = self.armored_duck_open
         self.rect = self.image.get_rect()
+        
+
+    def update(self):
+        return super().update()
     
 
 #####################################################
