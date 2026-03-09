@@ -34,10 +34,21 @@ except pg.error as e:
 #####################################################
 class Animal(pg.sprite.Sprite):
 
-    def __init__(self):
+    def __init__(self, level = 1):
         super().__init__()
         self.life = True        #Using to equal alive/dead status of animal
-    
+        self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
+
+    def update(self):
+        newpos = self.calcnewpos(self.rect,self.level)          ##### In work #####
+        self.rect = newpos
+
+    def calcnewpos(self,rect,level):
+        # Simplified movement algorithm based on level
+        angle = random.uniform(0, 2 * math.pi)
+        z = level * 2  # Speed increases with level
+        (dx,dy) = (z*math.cos(angle),z*math.sin(angle))
+        return rect.move(dx,dy)
 
 
 #####################################################
@@ -46,11 +57,13 @@ class Animal(pg.sprite.Sprite):
 
 class NormalDuck(Animal):
 
-    def __init__(self, name, age, health):
-        super().__init__(name, "Normal Duck", age, health)
-
-    def move(self):
-        print(f"{self.name} the Normal duck is waddling.")
+    def __init__(self):
+        super().__init__()
+        self.image = Duck_Open
+        self.rect = self.image.get_rect()
+    
+    
+    
 
 #####################################################
 ##### Super Duck Class ##############################
@@ -58,11 +71,11 @@ class NormalDuck(Animal):
 
 class SuperDuck(Animal):
 
-    def __init__(self, name, age, health):
-        super().__init__(name, "Super Duck", age, health)
-
-    def move(self):
-        print(f"{self.name} the Super duck is flying!")
+    def __init__(self):
+        super().__init__()
+        self.image = Armored_Duck_Open
+        self.rect = self.image.get_rect()
+    
 
 #####################################################
 ##### MAIN BLOCK ####################################
