@@ -9,6 +9,7 @@
 # IMPORTS & MACROS
 
 import copy
+import unittest
 
 ############################################################################################
 
@@ -95,5 +96,115 @@ class Queue(object):
     #__ne__       not applying this to a FIFO
     #__deepcopy__ accepting default implementation
 
+############################################################################################
+# UNIT TESTS
 
-    '''UNIT TESTS: DEVELOP BELOW'''
+class TestQueue(unittest.TestCase):
+
+    def setUp(self):
+        '''Fresh Queue before each test.'''
+        self.q = Queue()
+
+    # init
+
+    def test_init_empty(self):
+        self.assertEqual(self.q.size, 0)
+        self.assertTrue(self.q.empty())
+
+    # enqueue
+
+    def test_enqueue_increases_size(self):
+        self.q.enqueue("a")
+        self.assertEqual(self.q.size, 1)
+
+    def test_enqueue_multiple(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        self.assertEqual(self.q.size, 2)
+
+    def test_enqueue_none_raises(self):
+        with self.assertRaises(ValueError):
+            self.q.enqueue(None)
+
+    # dequeue
+
+    def test_dequeue_returns_first(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        self.assertEqual(self.q.dequeue(), "a")
+
+    def test_dequeue_decrements_size(self):
+        self.q.enqueue("a")
+        self.q.dequeue()
+        self.assertEqual(self.q.size, 0)
+
+    def test_dequeue_empty_raises(self):
+        with self.assertRaises(IndexError):
+            self.q.dequeue()
+
+    def test_dequeue_fifo_order(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        self.q.enqueue("c")
+        self.assertEqual(self.q.dequeue(), "a")
+        self.assertEqual(self.q.dequeue(), "b")
+        self.assertEqual(self.q.dequeue(), "c")
+
+    # empty
+
+    def test_empty_on_new_queue(self):
+        self.assertTrue(self.q.empty())
+
+    def test_not_empty_after_enqueue(self):
+        self.q.enqueue("a")
+        self.assertFalse(self.q.empty())
+
+    def test_empty_after_full_dequeue(self):
+        self.q.enqueue("a")
+        self.q.dequeue()
+        self.assertTrue(self.q.empty())
+
+    # read
+
+    def test_read_returns_front(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        self.assertEqual(self.q.read(), "a")
+
+    def test_read_does_not_remove(self):
+        self.q.enqueue("a")
+        self.q.read()
+        self.assertEqual(self.q.size, 1)
+
+    def test_read_empty_returns_none(self):
+        self.assertIsNone(self.q.read())
+
+    # __str__
+
+    def test_str_empty(self):
+        self.assertEqual(str(self.q), "Queue: []")
+
+    def test_str_nonempty(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        self.assertIn("a", str(self.q))
+        self.assertIn("b", str(self.q))
+
+    # copy
+
+    def test_copy_contains_same_data(self):
+        self.q.enqueue("a")
+        self.q.enqueue("b")
+        q2 = self.q.copy()
+        self.assertEqual(q2.dequeue(), "a")
+        self.assertEqual(q2.dequeue(), "b")
+
+    def test_copy_is_independent(self):
+        self.q.enqueue("a")
+        q2 = self.q.copy()
+        q2.enqueue("b")
+        self.assertEqual(self.q.size, 1)
+
+
+if __name__ == '__main__':
+    unittest.main()

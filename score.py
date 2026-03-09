@@ -11,6 +11,8 @@
 
 import json
 import os
+import tempfile
+import unittest
 from datetime import date
 from data_structures.my_hashtable import HashTable
 
@@ -105,5 +107,111 @@ def submit_score(name: str, score: int, table: HashTable) -> bool:
     table.set(name, {'score': score, 'date': str(date.today())})
     return True
 
+############################################################################################
+# UNIT TESTS
 
-'''UNIT TESTS: DEVELOP BELOW'''
+class TestScore(unittest.TestCase):
+
+    def setUp(self):
+        '''Fresh HashTable before each test.'''
+        self.table = HashTable()
+
+    # calculate_score
+
+    def test_calculate_score_basic(self):
+        result = calculate_score(10, 2, 3, 5.0)
+        self.assertEqual(result, 1150)  # (1000) - (50) + (150) + (50)
+
+    def test_calculate_score_minimum_zero(self):
+        self.assertEqual(calculate_score(0, 100, 0, 0.0), 0)
+
+    # submit_score
+
+    def test_submit_score_new_entry(self):
+        result = submit_score("alice", 100, self.table)
+        self.assertTrue(result)
+        self.assertEqual(self.table.get("alice")['score'], 100)
+
+    def test_submit_score_beats_existing(self):
+        submit_score("alice", 100, self.table)
+        result = submit_score("alice", 200, self.table)
+        self.assertTrue(result)
+        self.assertEqual(self.table.get("alice")['score'], 200)
+
+    def test_submit_score_lower_rejected(self):
+        submit_score("alice", 200, self.table)
+        result = submit_score("alice", 100, self.table)
+        self.assertFalse(result)
+        self.assertEqual(self.table.get("alice")['score'], 200)
+
+    def test_submit_score_equal_rejected(self):
+        submit_score("alice", 100, self.table)
+        result = submit_score("alice", 100, self.table)
+        self.assertFalse(result)
+
+    def test_submit_score_empty_name_raises(self):
+        with self.assertRaises(ValueError):
+            submit_score("", 100, self.table)
+
+    def test_submit_score_negative_score_raises(self):
+        with self.assertRaises(ValueError):
+            submit_score("alice", -1, self.table)
+
+    # get_top_10
+
+    def test_get_top_10_sorted(self):
+        submit_score("alice", 300, self.table)
+        submit_score("bob", 100, self.table)
+        submit_score("carol", 200, self.table)
+        top = get_top_10(self.table)
+        self.assertEqual(top[0][0], "alice")
+        self.assertEqual(top[1][0], "carol")
+        self.assertEqual(top[2][0], "bob")
+
+    def test_get_top_10_limits_to_10(self):
+        for i in range(15):
+            submit_score(f"player{i}", i * 10, self.table)
+        self.assertEqual(len(get_top_10(self.table)), 10)
+
+    # is_top_10
+
+    def test_is_top_10_when_table_not_full(self):
+        submit_score("alice", 100, self.table)
+        self.assertTrue(is_top_10(1, self.table))
+
+    def test_is_top_10_beats_lowest(self):
+        for i in range(10):
+            submit_score(f"player{i}", (i + 1) * 100, self.table)
+        self.assertTrue(is_top_10(150, self.table))     # beats lowest (100)
+
+    def test_is_top_10_does_not_beat_lowest(self):
+        for i in range(10):
+            submit_score(f"player{i}", (i + 1) * 100, self.table)
+        self.assertFalse(is_top_10(50, self.table))     # below lowest (100)
+
+    # load_scores / save_scores
+
+    def test_save_and_load_roundtrip(self):
+        submit_score("alice", 500, self.table)
+        submit_score("bob", 300, self.table)
+        with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as f:
+            path = f.name
+        save_scores(self.table, path)
+        loaded = load_scores(path)
+        self.assertEqual(loaded.get("alice")['score'], 500)
+        self.assertEqual(loaded.get("bob")['score'], 300)
+
+    def test_load_scores_missing_file(self):
+        loaded = load_scores("/nonexistent/path/scores.json")
+        self.assertTrue(loaded.empty())
+
+    def test_load_scores_malformed_raises(self):
+        with tempfile.NamedTemporaryFile(suffix='.json', mode='w', delete=False) as f:
+            f.write("not valid json{{")
+            path = f.name
+        with self.assertRaises(ValueError):
+            load_scores(path)
+
+
+if __name__ == '__main__':
+    unittest.main()
