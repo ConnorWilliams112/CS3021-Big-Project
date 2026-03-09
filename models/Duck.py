@@ -43,8 +43,17 @@ class Duck(pg.sprite.Sprite):
         self.duck_dead = pg.transform.scale(Duck_Dead, (50, 50))
 
     def update(self):
-        newpos = self.calcnewpos(self.rect,self.level)          ##### In work #####
-        self.rect = newpos
+        if not self.life:
+            # Duck is dead and falling - move it downward
+            newpos = self.rect.move(0, 8)  # Fall speed of 8 pixels per frame
+            self.rect = newpos
+            # Remove sprite when it reaches the bottom of the screen (HEIGHT = 540)
+            if self.rect.top > 540:
+                pg.sprite.Sprite.kill(self)  # Call parent class kill to remove from groups
+        else:
+            # Normal movement for living duck
+            newpos = self.calcnewpos(self.rect, self.level)          ##### In work #####
+            self.rect = newpos
 
     def calcnewpos(self,rect,level):
         # Simplified movement algorithm based on level
@@ -52,6 +61,12 @@ class Duck(pg.sprite.Sprite):
         z = level * 2  # Speed increases with level
         (dx,dy) = (z*math.cos(angle),z*math.sin(angle))
         return rect.move(dx,dy)
+    
+    def kill(self):
+        """Kill the duck - change to dead image and make it fall to the bottom of the screen."""
+        self.life = False
+        self.image = self.duck_dead
+        self.rect = self.image.get_rect()
 
 
 #####################################################
@@ -67,15 +82,15 @@ class NormalDuck(Duck):
         self.rect = self.image.get_rect()
     
     def update(self):
-        if not self.life:
-            self.image = self.duck_dead
-        elif self.image == self.duck_open:
+        if self.image == self.duck_open:
             self.image = self.duck_closed
+            self.rect = self.image.get_rect()
         else:
             self.image = self.duck_open
+            self.rect = self.image.get_rect()
         return super().update()
     
-    def kill(self):
+    
     
 #####################################################
 ##### Super Duck Class ##############################
@@ -89,13 +104,37 @@ class SuperDuck(Duck):
         self.armored_duck_open = pg.transform.scale(Armored_Duck_Open, (50, 50))
         self.armored_duck_closed = pg.transform.scale(Armored_Duck_Closed, (50, 50))
         self.armored_duck_exploded = pg.transform.scale(Armored_Duck_Exploded, (50, 50))
-        
+        self.shots = 3  # Super duck requires 2 shots to kill
         # Set default image to open state
         self.image = self.armored_duck_open
         self.rect = self.image.get_rect()
         
 
     def update(self):
+        if self.shots == 3:
+            if self.image == self.armored_duck_open:
+                self.image = self.armored_duck_closed
+                self.rect = self.image.get_rect()
+            else:
+                self.image = self.armored_duck_open
+                self.rect = self.image.get_rect()
+
+        elif self.shots == 2:
+            self.image = self.armored_duck_exploded
+            self.rect = self.image.get_rect()
+            self.shots = 1
+        
+        elif self.shots == 1:
+            if self.image == self.armored_duck_exploded:
+                self.image = self.duck_open
+                self.rect = self.image.get_rect()
+            elif self.image == self.duck_open:
+                self.image = self.duck_closed
+                self.rect = self.image.get_rect()
+            elif self.image == self.duck_closed:
+                self.image = self.duck_open
+                self.rect = self.image.get_rect()
+
         return super().update()
     
 
