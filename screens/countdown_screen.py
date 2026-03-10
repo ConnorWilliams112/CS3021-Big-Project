@@ -14,23 +14,24 @@ WIDTH, HEIGHT = 960, 540
 FPS = 60
 
 
-def run(screen, clock):
+def run(screen, clock, level_num=1):
     """Display the countdown sequence (3, 2, 1, GO!) then return "done".
 
     Args:
-        screen: The pygame display surface passed in from the main game.
-        clock:  The pygame Clock used for framerate control.
+        screen:    The pygame display surface passed in from the main game.
+        clock:     The pygame Clock used for framerate control.
+        level_num: The level number about to start, displayed above the countdown.
 
     Returns:
         "done" once the full countdown finishes.
     """
-    # TODO: Replace the path below with the actual countdown background image file path
-    # background = pygame.image.load("PATH_TO_IMAGE/countdown_background.png").convert()
+    
     # background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_color = (30, 30, 30)  # Fallback color — remove this line once background image is set
 
     font_number = pygame.font.Font(None, 220)
     font_go     = pygame.font.Font(None, 160)
+    font_level  = pygame.font.Font(None, 72)
 
     # Each entry: (label_text, display_duration_ms)
     countdown_steps = [("3", 1000), ("2", 1000), ("1", 1000), ("GO!", 800)]
@@ -56,8 +57,10 @@ def run(screen, clock):
         font  = font_go if label == "GO!" else font_number
         color = (255, 220, 0) if label == "GO!" else (255, 255, 255)
 
-        # screen.blit(background, (0, 0))  # Uncomment once background image is set
         screen.fill(background_color)      # Remove this line once background image is set
+
+        level_surf = font_level.render(f"LEVEL {level_num}", True, (255, 180, 0))
+        screen.blit(level_surf, level_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 140)))
 
         text_surf = font.render(label, True, color)
         screen.blit(text_surf, text_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
@@ -70,5 +73,5 @@ if __name__ == "__main__":
     _screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("DUCK HUNTER - Countdown")
     _clock = pygame.time.Clock()
-    run(_screen, _clock)
+    run(_screen, _clock, level_num=1)
     pygame.quit()

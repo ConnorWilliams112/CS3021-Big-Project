@@ -48,12 +48,12 @@ duck_hunter/
 │   ├── __init__.py
 │   ├── screens/
 │   │   ├── __init__.py
-│   │   ├── welcome_screen.py      # Logo, Play button, high score display, music toggle
-│   │   ├── hunt_select_screen.py  # Landscape selector, rules popup, easter egg handler
-│   │   ├── countdown_screen.py    # "3...2...1...Go!" overlay
-│   │   ├── hud.py                 # In-game overlay: ammo display, score, timer
-│   │   ├── win_screen.py          # Stats display, name entry prompt if top 10
-│   │   └── lose_screen.py         # Laughing duck animation, return to menu
+│   │   ├── welcome_screen.py             # Logo, Play button, high score display, music toggle
+│   │   ├── landscape_selector_screen.py  # Landscape selector, rules popup, easter egg handler
+│   │   ├── countdown_screen.py           # "3...2...1...Go!" overlay
+│   │   ├── overlay.py                    # In-game overlay: ammo display, score, timer
+│   │   ├── win_screen.py                 # Stats display, name entry prompt if top 10
+│   │   └── lose_screen.py                # Laughing duck animation, return to menu
 │   │
 │   └── button.py            # Button class — click handling, callback via
 │                            # function-as-argument (satisfies functional prog req)

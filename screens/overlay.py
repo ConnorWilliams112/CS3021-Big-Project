@@ -12,11 +12,6 @@ import pygame
 
 WIDTH, HEIGHT = 960, 540
 
-# TODO: Replace the paths below with the actual HUD icon image file paths
-# HEART_ICON = pygame.transform.scale(
-#     pygame.image.load("PATH_TO_IMAGE/heart_icon.png").convert_alpha(), (28, 28))
-# AMMO_ICON = pygame.transform.scale(
-#     pygame.image.load("PATH_TO_IMAGE/ammo_icon.png").convert_alpha(), (22, 28))
 
 _score_font = None
 _timer_font = None
@@ -60,14 +55,12 @@ def draw(screen, score=0, lives=3, ammo=10, time_remaining=60):
     screen.blit(timer_surf, timer_surf.get_rect(midtop=(WIDTH // 2, 5)))
 
     # Lives — top-right
-    # Uncomment the block below once HEART_ICON image is set:
     # for i in range(lives):
     #     screen.blit(HEART_ICON, (WIDTH - 36 - i * 34, 14))
     lives_surf = _hud_font.render(f"Lives: {lives}", True, (255, 255, 255))
     screen.blit(lives_surf, lives_surf.get_rect(topright=(WIDTH - 15, 8)))
 
     # Ammo — below lives on the right
-    # Uncomment the block below once AMMO_ICON image is set:
     # for i in range(ammo):
     #     screen.blit(AMMO_ICON, (WIDTH - 30 - i * 28, 36))
     ammo_surf = _hud_font.render(f"Ammo: {ammo}", True, (255, 255, 255))

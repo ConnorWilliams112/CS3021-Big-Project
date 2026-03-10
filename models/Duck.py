@@ -73,10 +73,13 @@ FULL_ROTATION = 2 * math.pi
 DEAD_DUCK_FALL_SPEED = 8
 DEAD_DUCK_PAUSE_FRAMES = 15
 
-# Screen constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_REMOVAL_THRESHOLD = 540  # Remove dead ducks when they fall past this
+# Screen constants  (must match game_loop.py resolution)
+SCREEN_WIDTH = 960
+SCREEN_HEIGHT = 540
+SCREEN_REMOVAL_THRESHOLD = 560  # Remove dead ducks when they fall past this
+
+# Frames before an un-shot duck is considered escaped (~10 s at 60 fps)
+ESCAPE_FRAMES = 600
 
 # SuperDuck shot states
 SUPERDUCK_INITIAL_SHOTS = 3
@@ -92,7 +95,7 @@ class Duck(pg.sprite.Sprite):
     Contains common attributes and methods for movement, state management, and rendering.
     Also contains logic for handling being shot (killed) and transitioning to a falling state befor erasure from the game.
     '''
-    def __init__(self, level):
+    def __init__(self, level, speed=None):
         super().__init__()
         self.life = True        #Using to show alive/dead status of animal
         self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
@@ -100,8 +103,8 @@ class Duck(pg.sprite.Sprite):
         
         # Smooth movement parameters
 
-        # Speed increases linearly with level
-        self.speed = BASE_SPEED + (level - 1) * SPEED_MULTIPLIER
+        # Use explicitly provided speed (from Level config) or fall back to linear formula
+        self.speed = speed if speed is not None else BASE_SPEED + (level - 1) * SPEED_MULTIPLIER
 
         # Direction change interval decreases with level (higher level = more direction changes)
         self.direction_change_interval = BASE_DIRECTION_CHANGE_INTERVAL - (level - 1) * DIRECTION_CHANGE_MULTIPLIER
@@ -114,6 +117,11 @@ class Duck(pg.sprite.Sprite):
         
         # Pause counter for movement pause effects (0.5 seconds = 15 frames at 30 FPS)
         self.pause_frames = 0
+
+        # Integration attributes used by game_loop.py
+        self.escaped        = False
+        self._should_remove = False
+        self._frame_count   = 0   # frames spent alive (for escape timer)
         
         # Initialize common sprite images
         self.duck_open = pg.transform.scale(Duck_Open, (DUCK_SPRITE_SIZE, DUCK_SPRITE_SIZE))
@@ -140,6 +148,11 @@ class Duck(pg.sprite.Sprite):
     ##### Custom Behaviors Block ########################
     #####################################################
 
+    @property
+    def is_dead(self):
+        """True once the duck has received its killing shot."""
+        return not self.life
+
     def update(self):
         '''
         Update method for duck movement and state management. Called every frame by the game loop.
@@ -152,10 +165,17 @@ class Duck(pg.sprite.Sprite):
             else:               # After pause, move downward
                 newpos = self.rect.move(0, DEAD_DUCK_FALL_SPEED)  # Fall speed
                 self.rect = newpos
-            # Remove sprite when it reaches the bottom of the screen
+            # Signal removal when the duck has fallen off the bottom of the screen
             if self.rect.top > SCREEN_REMOVAL_THRESHOLD:
-                pg.sprite.Sprite.kill(self)  # Call parent class kill to remove from groups
+                self._should_remove = True
         else:
+            # Escape timer — duck vanishes if never shot within time limit
+            self._frame_count += 1
+            if self._frame_count > ESCAPE_FRAMES:
+                self.escaped        = True
+                self._should_remove = True
+                return
+
             # Store old position to determine direction
             old_x = self.rect.x
 
@@ -225,12 +245,22 @@ class NormalDuck(Duck):
     '''
     Normal, unarmored duck type. Uses the base movement and state management from Duck class, with specific sprite images for normal duck.
     '''
-    def __init__(self, level):
-        super().__init__(level)
+
+    score_value = 100
+
+    def __init__(self, level, speed=None):
+        super().__init__(level, speed=speed)
         # Set default image to open state
         self.image = self.duck_open
         self.rect = self.image.get_rect()
-    
+        self.rect.x = random.randint(0, max(0, SCREEN_WIDTH  - self.rect.width))
+        self.rect.y = random.randint(0, max(0, SCREEN_HEIGHT - self.rect.height))
+
+    def shoot(self):
+        '''Shoot the duck. Always kills it. Returns True (duck is now dead).'''
+        self.kill()
+        return True
+
     def update(self):
         '''
         Toggle between open and closed images based on movement state while alive (flapping)
@@ -254,8 +284,11 @@ class SuperDuck(Duck):
     Armored duck type that requires multiple hits to kill. Has additional states for armored, damaged, and normal appearances.
     Inherits movement and state management from Duck class, with specific logic for handling multiple hits and sprite changes based on shot state.
     '''
-    def __init__(self, level):
-        super().__init__(level)
+
+    score_value = 200
+
+    def __init__(self, level, speed=None):
+        super().__init__(level, speed=speed)
         # Create sprite instances from armored duck images
         self.armored_duck_open = pg.transform.scale(Armored_Duck_Open, (DUCK_SPRITE_SIZE, DUCK_SPRITE_SIZE))
         self.armored_duck_closed = pg.transform.scale(Armored_Duck_Closed, (DUCK_SPRITE_SIZE, DUCK_SPRITE_SIZE))
@@ -267,7 +300,24 @@ class SuperDuck(Duck):
         # Set default image to open state
         self.image = self.armored_duck_open
         self.rect = self.image.get_rect()
-        
+        self.rect.x = random.randint(0, max(0, SCREEN_WIDTH  - self.rect.width))
+        self.rect.y = random.randint(0, max(0, SCREEN_HEIGHT - self.rect.height))
+
+    def shoot(self):
+        '''
+        Register a hit on the SuperDuck.
+        Returns True when the final shot kills it, False when it is only damaged.
+        First shot: armored → damaged (transitions automatically to normal after pause).
+        Second shot: normal → dead.
+        '''
+        if self.shots > SUPERDUCK_NORMAL_SHOTS:
+            self.shots       -= 1
+            self.pause_frames = DEAD_DUCK_PAUSE_FRAMES  # brief stagger animation
+            return False
+        else:  # shots == SUPERDUCK_NORMAL_SHOTS (1) — killing blow
+            Duck.kill(self)
+            return True
+
     def update(self):
         '''
         Toggles between open and closed images based on movement state while alive (flapping)

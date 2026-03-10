@@ -15,13 +15,14 @@ WIDTH, HEIGHT = 960, 540
 FPS = 60
 
 
-def run(screen, clock, score=0):
+def run(screen, clock, score=0, high_scores=None):
     """Display the Game Over / lose screen.
 
     Args:
-        screen: The pygame display surface passed in from the main game.
-        clock:  The pygame Clock used for framerate control.
-        score:  The player's final score to display.
+        screen:      The pygame display surface passed in from the main game.
+        clock:       The pygame Clock used for framerate control.
+        score:       The player's final score to display.
+        high_scores: List of (name, score, date) tuples from get_top_10(), or None.
 
     Returns:
         "play_again" if the player chooses to retry, or "main_menu" to return
@@ -29,13 +30,12 @@ def run(screen, clock, score=0):
     """
     manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
-    # TODO: Replace the path below with the actual lose screen background image file path
-    # background = pygame.image.load("PATH_TO_IMAGE/lose_background.png").convert()
-    # background = pygame.transform.scale(background, (WIDTH, HEIGHT))
     background_color = (139, 0, 0)  # Fallback color — remove this line once background image is set
 
-    title_font = pygame.font.Font(None, 120)
-    score_font = pygame.font.Font(None, 60)
+    title_font  = pygame.font.Font(None, 120)
+    score_font  = pygame.font.Font(None, 60)
+    hs_hdr_font = pygame.font.Font(None, 34)
+    hs_row_font = pygame.font.Font(None, 26)
 
     play_again_button = pygame_gui.elements.UIButton(
         relative_rect=pygame.Rect((WIDTH // 2 - 110, HEIGHT // 2 + 30), (220, 55)),
@@ -68,7 +68,6 @@ def run(screen, clock, score=0):
 
         manager.update(time_delta)
 
-        # screen.blit(background, (0, 0))  # Uncomment once background image is set
         screen.fill(background_color)      # Remove this line once background image is set
 
         title_surf = title_font.render("GAME OVER", True, (255, 255, 255))
@@ -76,6 +75,20 @@ def run(screen, clock, score=0):
 
         score_surf = score_font.render(f"Score: {score}", True, (255, 220, 100))
         screen.blit(score_surf, score_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 25)))
+
+        # ── High scores panel (right side) ───────────────────────────────────
+        hs_x = 635
+        pygame.draw.rect(screen, (100, 0, 0), pygame.Rect(hs_x - 10, 88, 310, 310), border_radius=6)
+        hdr_surf = hs_hdr_font.render("HIGH SCORES", True, (255, 220, 100))
+        screen.blit(hdr_surf, (hs_x, 95))
+        pygame.draw.line(screen, (220, 180, 80), (hs_x, 128), (hs_x + 290, 128), 1)
+        if high_scores:
+            for i, (_, entry_score, entry_date) in enumerate(high_scores[:10]):
+                row_color = (255, 255, 0) if entry_score == score else (220, 220, 220)
+                row = hs_row_font.render(f"#{i + 1:<2}  {entry_score:>6} pts   {entry_date}", True, row_color)
+                screen.blit(row, (hs_x, 136 + i * 26))
+        else:
+            screen.blit(hs_row_font.render("No scores yet", True, (180, 180, 180)), (hs_x, 136))
 
         manager.draw_ui(screen)
         pygame.display.flip()
