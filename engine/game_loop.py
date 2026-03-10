@@ -18,6 +18,7 @@ import pygame
 
 from data_structures.my_queue import Queue
 from engine.level import Level
+from engine.score import calculate_score
 from models.Duck import NormalDuck, SuperDuck
 from models.Gun import Gun
 from models.Player import Player
@@ -61,7 +62,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
     gun    = Gun("Shotgun", ammo_capacity=10)
     player = Player("Player1", health=3)
 
-    score       = 0
+    hits        = 0
+    misses      = 0
     start_ticks = pygame.time.get_ticks()
 
     active_ducks = pygame.sprite.Group()
@@ -75,6 +77,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         clock.tick(FPS)
         elapsed        = (pygame.time.get_ticks() - start_ticks) / 1000.0
         time_remaining = max(0.0, level.time_limit - elapsed)
+        score          = calculate_score(hits, misses, level.number, time_remaining)
 
         # ── Events ───────────────────────────────────────────────────────────
         for event in pygame.event.get():
@@ -96,7 +99,9 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
                         for duck in hit_list:
                             killed = duck.shoot()
                             if killed:
-                                score += duck.score_value
+                                hits += 1
+                    else:
+                        misses += 1
                     gun.shoot()
 
         # ── Spawn ─────────────────────────────────────────────────────────────
