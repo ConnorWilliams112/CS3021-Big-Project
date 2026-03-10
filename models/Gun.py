@@ -24,6 +24,7 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
+
 # Load sounds
 try:
     reload_sound = pg.mixer.Sound('Reloading.mp3')              #FAHHHH sound for miss
