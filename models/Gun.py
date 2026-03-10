@@ -24,16 +24,6 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
-# Load sounds
-try:
-    reload_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Reloading.mp3'))              #FAHHHH sound for miss
-    firing_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Firing.mp3'))
-    click_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'EmptyClick.mp3'))
-except pg.error as e:
-    print(f"Error loading sound: {e}")
-    print(f"Looking for sounds in: {SOUND_DIR}")
-    exit()
-
 # load images
 try:
     _6rds = pg.image.load(os.path.join(IMAGES_DIR, "6rds.png"))             #Need to clear out whitespace
