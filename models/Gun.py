@@ -24,7 +24,6 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
-
 # Load sounds
 try:
     reload_sound = pg.mixer.Sound('Reloading.mp3')              #FAHHHH sound for miss
@@ -78,12 +77,20 @@ class Gun(pg.sprite.Sprite):
     Spacebar and mouseclick functionality lives in game engine, calls methods that exist in the class
     '''
     def __init__(self, level):
-        super.__init__()
+        super().__init__()
         self.ammo_capacity = MAGAZINE + (level - 1) * MAGAZINE          ### Would like to display this in top right of screen ###
         self.current_ammo = self.ammo_capacity                          ### Getter/setter ??? Protect current_ammo and mag ???
         self.current_mag = MAGAZINE
         self.image = _6rds
         self.rect = self.image.get_rect()                               ### Display functionality called via testbed (like DuckDuckGo)
+        try:
+            self.reload_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Reloading.mp3'))
+            self.firing_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Firing.mp3'))
+            self.click_sound  = pg.mixer.Sound(os.path.join(SOUND_DIR, 'EmptyClick.mp3'))
+        except pg.error as e:
+            print(f"Error loading sound: {e}")
+            print(f"Looking for sounds in: {SOUND_DIR}")
+            exit()
 
     def shoot(self):
         '''
@@ -110,11 +117,11 @@ class Gun(pg.sprite.Sprite):
             else:
                 self.image = _0rds
                 self.rect = self.image.get_rect()
-            return firing_sound.play()
+            return self.firing_sound.play()
         else:
             self.image = _0rds
             self.rect = self.image.get_rect()
-            return click_sound.play()
+            return self.click_sound.play()
 
     def reload(self):
         '''

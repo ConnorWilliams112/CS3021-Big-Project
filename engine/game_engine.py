@@ -1,4 +1,4 @@
-# File Name: main.py
+# File Name: game_engine.py
 # CS3021 Big Project - Duck Hunter
 # Owen Keusch, Michael Schnabel, Connor Williams
 # Last Updated: 20260309
@@ -8,9 +8,10 @@
 # ----------------------------------------------------------------------------------------
 
 import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import time
 import pygame
-from datetime import date
 
 WIDTH, HEIGHT = 960, 540
 FPS = 60
@@ -28,7 +29,7 @@ def main():
     from screens import win_screen, lose_screen
     from engine import game_loop
     from engine.level import Level, MAX_LEVELS
-    from engine.score import load_scores, save_scores, get_top_10
+    from persistence.save_load import load_scores, save_scores, get_top_10, submit_score
 
     high_score_table = load_scores()
 
@@ -62,7 +63,7 @@ def main():
             state = outcome   # "win" or "lose"
 
         elif state == "win":
-            high_score_table.set(f"run_{int(time.time())}", {'score': score, 'date': str(date.today())})
+            submit_score(f"run_{int(time.time())}", score, high_score_table)
             save_scores(high_score_table)
             result = win_screen.run(screen, clock, score=score, high_scores=get_top_10(high_score_table))
             if result == "play_again":
@@ -78,7 +79,7 @@ def main():
                 state     = "welcome"
 
         elif state == "lose":
-            high_score_table.set(f"run_{int(time.time())}", {'score': score, 'date': str(date.today())})
+            submit_score(f"run_{int(time.time())}", score, high_score_table)
             save_scores(high_score_table)
             result = lose_screen.run(screen, clock, score=score, high_scores=get_top_10(high_score_table))
             if result == "play_again":
