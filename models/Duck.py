@@ -51,6 +51,7 @@ try:
     Armored_Duck_Open_Flipped = Armored_Duck_Open_Flipped.convert_alpha()
     Armored_Duck_Closed_Flipped = Armored_Duck_Closed_Flipped.convert_alpha()
     Armored_Duck_Exploded_Flipped = Armored_Duck_Exploded_Flipped.convert_alpha()
+    
 except pg.error as e:
     print(f"Error loading image: {e}")
     print(f"Looking for images in: {IMAGES_DIR}")

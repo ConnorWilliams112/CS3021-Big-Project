@@ -20,7 +20,6 @@ from data_structures.my_queue import Queue
 from engine.level import Level
 from models.Duck import NormalDuck, SuperDuck
 from models.Gun import Gun
-from models.Player import Player
 from screens import overlay
 
 WIDTH, HEIGHT = 960, 540
@@ -58,8 +57,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
     fallback_color = (34, 85, 34)
 
     # Game objects
-    gun    = Gun("Shotgun", ammo_capacity=10)
-    player = Player("Player1", health=3)
+    #gun    = Gun("Shotgun", ammo_capacity=10)           #Fix
 
     score       = 0
     start_ticks = pygame.time.get_ticks()
@@ -134,8 +132,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         pygame.display.flip()
 
         # ── Win / Lose checks ─────────────────────────────────────────────────
-        if not player.is_alive:
-            return "lose", score
+        #if not player.is_alive:         #Get rid of
+            #return "lose", score
 
         if time_remaining <= 0:
             return ("win" if score >= level.point_threshold else "lose"), score
