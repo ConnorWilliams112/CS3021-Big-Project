@@ -15,6 +15,7 @@
 
 import copy as copy
 import pygame as pg
+import pygame_gui as gui
 import random as random
 import math as math
 import os
@@ -45,8 +46,8 @@ MAGAZINE = 6
 
 class Gun(pg.sprite.Sprite):
     '''
-    Class container for gun/magazine logic. Initializes a round counter at top right of screen that decrements with mouse clicks.
-    Also has magazine/tube bar that decrements with click
+    Class container for gun/magazine logic. Initializes a round counter at top right of screen that decrements with reloads.
+    Also has magazine/tube bar that decrements with mouseclick 
 
     Start with BASE + (level - 1) * 6 rounds
     "Magazine" holds 6rds (shotgun tube)
@@ -56,21 +57,43 @@ class Gun(pg.sprite.Sprite):
     '''
     def __init__(self, level):
         super.__init__()
-        self.ammo_capacity = MAGAZINE + (level - 1) * MAGAZINE
+        self.ammo_capacity = MAGAZINE + (level - 1) * MAGAZINE          ### Would like to display this in top right of screen ###
         self.current_ammo = self.ammo_capacity
         self.current_mag = MAGAZINE
 
     def shoot(self):
+        '''
+        If rounds left in magazine, plays "firing" sound and decrements magazine
+        If no rounds, plays clicking sound
+        '''
         if self.current_ammo > 0:
             self.current_ammo -= 1
-            pass
+            return firing_sound.play()
         else:
-            pass
+            return click_sound.play()
 
     def reload(self):
-        if self.current_ammo
+        '''
+        Accessed from game via spacebar
 
-        reload_sound.play()
+        Reloads and plays sound only if ammo remains and magazine not already full
+        If reloads, decrements capacity by # rounds reloaded
+        '''
+        remaining = self.current_ammo
+        magazine = self.current_mag
+
+        if magazine == MAGAZINE or remaining == 0:
+            return
+        else:
+            delta = MAGAZINE - magazine
+            if remaining >= delta:
+                self.current_ammo -= delta
+                self.current_mag = MAGAZINE
+                return reload_sound.play()
+            else:
+                self.current_mag += remaining
+                self.current_ammo = 0
+                return reload_sound.play()
 
 
 #####################################################
