@@ -23,7 +23,7 @@ import os
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
 
-# Load images without convert_alpha() - will be converted in Duck __init__
+# Load images
 try:
     Duck_Open = pg.image.load(os.path.join(IMAGES_DIR, "Duck_Open.png"))
     Duck_Closed = pg.image.load(os.path.join(IMAGES_DIR, "Duck_Closed.png"))
@@ -37,6 +37,20 @@ try:
     Armored_Duck_Open_Flipped = pg.image.load(os.path.join(IMAGES_DIR, "Armored_Duck_Open_flipped.png"))
     Armored_Duck_Closed_Flipped = pg.image.load(os.path.join(IMAGES_DIR, "Armored_Duck_Closed_flipped.png"))
     Armored_Duck_Exploded_Flipped = pg.image.load(os.path.join(IMAGES_DIR, "Armored_Duck_Exploded_flipped.png"))
+    
+    # Convert all images for better performance
+    Duck_Open = Duck_Open.convert_alpha()
+    Duck_Closed = Duck_Closed.convert_alpha()
+    Duck_Dead = Duck_Dead.convert_alpha()
+    Duck_Open_Flipped = Duck_Open_Flipped.convert_alpha()
+    Duck_Closed_Flipped = Duck_Closed_Flipped.convert_alpha()
+    Duck_Dead_Flipped = Duck_Dead_Flipped.convert_alpha()
+    Armored_Duck_Open = Armored_Duck_Open.convert_alpha()
+    Armored_Duck_Closed = Armored_Duck_Closed.convert_alpha()
+    Armored_Duck_Exploded = Armored_Duck_Exploded.convert_alpha()
+    Armored_Duck_Open_Flipped = Armored_Duck_Open_Flipped.convert_alpha()
+    Armored_Duck_Closed_Flipped = Armored_Duck_Closed_Flipped.convert_alpha()
+    Armored_Duck_Exploded_Flipped = Armored_Duck_Exploded_Flipped.convert_alpha()
 except pg.error as e:
     print(f"Error loading image: {e}")
     print(f"Looking for images in: {IMAGES_DIR}")
@@ -47,32 +61,8 @@ except pg.error as e:
 #####################################################
 class Duck(pg.sprite.Sprite):
 
-    # Class variable to track if images have been converted
-    _images_converted = False
-
     def __init__(self, level):
         super().__init__()
-        
-        # Convert images on first instantiation (after display is initialized)
-        if not Duck._images_converted:
-            global Duck_Open, Duck_Closed, Duck_Dead, Duck_Open_Flipped, Duck_Closed_Flipped
-            global Duck_Dead_Flipped, Armored_Duck_Open, Armored_Duck_Closed, Armored_Duck_Exploded
-            global Armored_Duck_Open_Flipped, Armored_Duck_Closed_Flipped, Armored_Duck_Exploded_Flipped
-            
-            Duck_Open = Duck_Open.convert_alpha()
-            Duck_Closed = Duck_Closed.convert_alpha()
-            Duck_Dead = Duck_Dead.convert_alpha()
-            Duck_Open_Flipped = Duck_Open_Flipped.convert_alpha()
-            Duck_Closed_Flipped = Duck_Closed_Flipped.convert_alpha()
-            Duck_Dead_Flipped = Duck_Dead_Flipped.convert_alpha()
-            Armored_Duck_Open = Armored_Duck_Open.convert_alpha()
-            Armored_Duck_Closed = Armored_Duck_Closed.convert_alpha()
-            Armored_Duck_Exploded = Armored_Duck_Exploded.convert_alpha()
-            Armored_Duck_Open_Flipped = Armored_Duck_Open_Flipped.convert_alpha()
-            Armored_Duck_Closed_Flipped = Armored_Duck_Closed_Flipped.convert_alpha()
-            Armored_Duck_Exploded_Flipped = Armored_Duck_Exploded_Flipped.convert_alpha()
-            Duck._images_converted = True
-        
         self.life = True        #Using to equal alive/dead status of animal
         self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
         self.facing_right = True  #Track horizontal direction
