@@ -2,7 +2,7 @@
 # save_load.py
 #
 # Last edit: Michael Schnabel
-# Last updated: 
+# Last updated: 09 March 2026
 #
 # Thin persistence interface. Delegates to engine/score.py for JSON I/O.
 ############################################################################################
