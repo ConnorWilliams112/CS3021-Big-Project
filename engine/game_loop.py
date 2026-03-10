@@ -91,8 +91,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
                 if gun.current_ammo > 0:
                     mx, my    = pygame.mouse.get_pos()
                     shot_rect = pygame.Rect(mx - 5, my - 5, 10, 10)
-                    hit_list  = [d for d in active_ducks
-                                 if not d.is_dead and d.rect.colliderect(shot_rect)]
+                    hit_list  = [d for d in active_ducks if not d.is_dead and d.rect.colliderect(shot_rect)]
                     if hit_list:
                         for duck in hit_list:
                             killed = duck.shoot()

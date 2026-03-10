@@ -96,7 +96,7 @@ class Duck(pg.sprite.Sprite):
     Contains common attributes and methods for movement, state management, and rendering.
     Also contains logic for handling being shot (killed) and transitioning to a falling state befor erasure from the game.
     '''
-    def __init__(self, level, speed=None):
+    def __init__(self, level):
         super().__init__()
         self.life = True        #Using to show alive/dead status of animal
         self.level = level      #Using to determine movement algorithm of animal, later tie to difficulty levels
@@ -104,8 +104,8 @@ class Duck(pg.sprite.Sprite):
         
         # Smooth movement parameters
 
-        # Use explicitly provided speed (from Level config) or fall back to linear formula
-        self.speed = speed if speed is not None else BASE_SPEED + (level - 1) * SPEED_MULTIPLIER
+        # Speed increases linearly with level
+        self.speed = BASE_SPEED + (level - 1) * SPEED_MULTIPLIER
 
         # Direction change interval decreases with level (higher level = more direction changes)
         self.direction_change_interval = BASE_DIRECTION_CHANGE_INTERVAL - (level - 1) * DIRECTION_CHANGE_MULTIPLIER
@@ -148,11 +148,6 @@ class Duck(pg.sprite.Sprite):
     #####################################################
     ##### Custom Behaviors Block ########################
     #####################################################
-
-    @property
-    def is_dead(self):
-        """True once the duck has received its killing shot."""
-        return not self.life
 
     def update(self):
         '''
@@ -237,7 +232,15 @@ class Duck(pg.sprite.Sprite):
         # Pause movement for 0.5 seconds (15 frames at 30 FPS)
         self.pause_frames = DEAD_DUCK_PAUSE_FRAMES
 
-
+    def shoot(self):
+        '''
+        Registers a shot on the duck instance. For generality, this base class version kills the duck.
+        Implemented to reduce hit logic and type checks in game engine.
+        SuperDuck override will provide additional logic.
+        '''
+        self.kill()
+        return True
+    
 #####################################################
 ##### Normal Duck Class #############################
 #####################################################
@@ -247,20 +250,13 @@ class NormalDuck(Duck):
     Normal, unarmored duck type. Uses the base movement and state management from Duck class, with specific sprite images for normal duck.
     '''
 
-    score_value = 100
-
-    def __init__(self, level, speed=None):
-        super().__init__(level, speed=speed)
+    def __init__(self, level):
+        super().__init__(level)
         # Set default image to open state
         self.image = self.duck_open
         self.rect = self.image.get_rect()
         self.rect.x = random.randint(0, max(0, SCREEN_WIDTH  - self.rect.width))
         self.rect.y = random.randint(0, max(0, SCREEN_HEIGHT - self.rect.height))
-
-    def shoot(self):
-        '''Shoot the duck. Always kills it. Returns True (duck is now dead).'''
-        self.kill()
-        return True
 
     def update(self):
         '''
@@ -286,10 +282,8 @@ class SuperDuck(Duck):
     Inherits movement and state management from Duck class, with specific logic for handling multiple hits and sprite changes based on shot state.
     '''
 
-    score_value = 200
-
-    def __init__(self, level, speed=None):
-        super().__init__(level, speed=speed)
+    def __init__(self, level):
+        super().__init__(level)
         # Create sprite instances from armored duck images
         self.armored_duck_open = pg.transform.scale(Armored_Duck_Open, (DUCK_SPRITE_SIZE, DUCK_SPRITE_SIZE))
         self.armored_duck_closed = pg.transform.scale(Armored_Duck_Closed, (DUCK_SPRITE_SIZE, DUCK_SPRITE_SIZE))
@@ -306,18 +300,15 @@ class SuperDuck(Duck):
 
     def shoot(self):
         '''
-        Register a hit on the SuperDuck.
-        Returns True when the final shot kills it, False when it is only damaged.
-        First shot: armored → damaged (transitions automatically to normal after pause).
-        Second shot: normal → dead.
+        Additional logic to support external shoot method on all Duck subclasses.
+        Does checking/setting of self.shots
         '''
         if self.shots > SUPERDUCK_NORMAL_SHOTS:
             self.shots       -= 1
             self.pause_frames = DEAD_DUCK_PAUSE_FRAMES  # brief stagger animation
             return False
-        else:  # shots == SUPERDUCK_NORMAL_SHOTS (1) — killing blow
-            Duck.kill(self)
-            return True
+        else:
+            super().shoot()
 
     def update(self):
         '''
