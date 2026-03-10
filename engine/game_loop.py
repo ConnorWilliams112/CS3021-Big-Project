@@ -20,7 +20,7 @@ from data_structures.my_queue import Queue
 from engine.level import Level
 from engine.score import calculate_score
 from models.Duck import NormalDuck, SuperDuck
-from models.Gun import Gun
+#from models.Gun import Gun
 from screens import overlay
 
 WIDTH, HEIGHT = 960, 540
@@ -117,7 +117,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         for duck in list(active_ducks):
             if duck._should_remove:
                 if duck.escaped:
-                    player.take_damage(1)
+                    #player.take_damage(1)
+                    pass
                 active_ducks.remove(duck)
 
         # ── Draw ──────────────────────────────────────────────────────────────
@@ -130,8 +131,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         overlay.draw(
             screen,
             score          = score,
-            lives          = max(0, player.health),
-            ammo           = gun.current_ammo,
+            #lives          = max(0, player.health),
+            #sammo           = gun.current_ammo,
             time_remaining = time_remaining,
         )
         pygame.display.flip()

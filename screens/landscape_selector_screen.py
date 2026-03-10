@@ -18,8 +18,7 @@ FPS = 60
 LANDSCAPES = [
     ("Forest", "forest"),
     ("Desert", "desert"),
-    ("Lake",   "lake"),
-    ("Snow",   "snow"),
+    ("Arctic",   "arctic")
 ]
 
 
