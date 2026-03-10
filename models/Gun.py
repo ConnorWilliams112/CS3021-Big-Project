@@ -138,6 +138,8 @@ class Gun(pg.sprite.Sprite):
                 self.current_ammo = 0
                 return reload_sound.play()
 
+    #def update(self):
+        # TO DO
 
 #####################################################
 ##### MAIN BLOCK ####################################
