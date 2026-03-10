@@ -17,7 +17,11 @@ from datetime import date
 from data_structures.my_hashtable import HashTable
 
 SCORE_FILE = os.path.join(os.path.dirname(__file__), '..', 'persistence', 'scores.json')
-TOP_N = 10
+TOP_N             = 10
+HITS_MULTIPLIER   = 100
+MISSES_MULTIPLIER = 25
+LEVEL_MULTIPLIER  = 50
+TIME_MULTIPLIER   = 10
 
 ############################################################################################
 
@@ -27,7 +31,7 @@ def calculate_score(hits: int, misses: int, level: int, time_remaining: float) -
     Formula: (hits * 100) - (misses * 25) + (level * 50) + (time_remaining * 10)
     Minimum score is 0.'''
 
-    raw = (hits * 100) - (misses * 25) + (level * 50) + int(time_remaining * 10)
+    raw = (hits * HITS_MULTIPLIER) - (misses * MISSES_MULTIPLIER) + (level * LEVEL_MULTIPLIER) + int(time_remaining * TIME_MULTIPLIER)
     return max(0, raw)
 
 
