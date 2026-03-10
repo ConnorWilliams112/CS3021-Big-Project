@@ -26,7 +26,7 @@ SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
 # Load sounds
 try:
-    reload_sound = pg.mixer.Sound('Reloading.mp3')
+    reload_sound = pg.mixer.Sound('Reloading.mp3')              #FAHHHH sound for miss
     firing_sound = pg.mixer.Sound('Firing.mp3')
     click_sound = pg.mixer.Sound('EmptyClick.mp3')
 except pg.error as e:
