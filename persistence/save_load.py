@@ -10,6 +10,5 @@
 from engine.score import load_scores, save_scores
 
 
-'''To use:
-
-from persistence.save_load import load_scores, save_scores'''
+# To use:
+# from persistence.save_load import load_scores, save_scores
