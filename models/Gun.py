@@ -5,7 +5,7 @@
 # 
 #
 # Winter 2026
-# Last updated: 9 March 2026
+# Last updated: 10 March 2026
 #
 # Author: Capt Connor Williams
 
@@ -25,21 +25,11 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOUND_DIR = os.path.join(SCRIPT_DIR, "sounds")
 IMAGES_DIR = os.path.join(SCRIPT_DIR, "Images")
 
-# Load sounds
-try:
-    reload_sound = pg.mixer.Sound('Reloading.mp3')              #FAHHHH sound for miss
-    firing_sound = pg.mixer.Sound('Firing.mp3')
-    click_sound = pg.mixer.Sound('EmptyClick.mp3')
-except pg.error as e:
-    print(f"Error loading sound: {e}")
-    print(f"Looking for sounds in: {SOUND_DIR}")
-    exit()
-
 # load images
 try:
-    _6rds = pg.image.load(os.path.join(IMAGES_DIR, "6rds.png"))             #Need to clear out whitespace
+    _6rds = pg.image.load(os.path.join(IMAGES_DIR, "6rds.png"))
     _6rds = _6rds.convert_alpha()
-    _5rds = pg.image.load(os.path.join(IMAGES_DIR, "5rds.png"))             #Are images best way to do it? or just do a status bar or something?
+    _5rds = pg.image.load(os.path.join(IMAGES_DIR, "5rds.png"))
     _5rds = _5rds.convert_alpha()
     _4rds = pg.image.load(os.path.join(IMAGES_DIR, "4rds.png"))
     _4rds = _4rds.convert_alpha()
@@ -60,6 +50,19 @@ except pg.error as er:
 ##### Constants #####################################
 #####################################################
 
+# Gun display constants
+GUN_WIDTH = 140
+GUN_HEIGHT = 80
+
+# Scale all gun images to GUN dimensions
+_6rds = pg.transform.scale(_6rds, (GUN_WIDTH, GUN_HEIGHT))
+_5rds = pg.transform.scale(_5rds, (GUN_WIDTH, GUN_HEIGHT))
+_4rds = pg.transform.scale(_4rds, (GUN_WIDTH, GUN_HEIGHT))
+_3rds = pg.transform.scale(_3rds, (GUN_WIDTH, GUN_HEIGHT))
+_2rds = pg.transform.scale(_2rds, (GUN_WIDTH, GUN_HEIGHT))
+_1rds = pg.transform.scale(_1rds, (GUN_WIDTH, GUN_HEIGHT))
+_0rds = pg.transform.scale(_0rds, (GUN_WIDTH, GUN_HEIGHT))
+
 MAGAZINE = 6
 
 #####################################################
@@ -79,8 +82,8 @@ class Gun(pg.sprite.Sprite):
     '''
     def __init__(self, level):
         super().__init__()
-        self.ammo_capacity = MAGAZINE + (level - 1) * MAGAZINE          ### Would like to display this in top right of screen ###
-        self.current_ammo = self.ammo_capacity                          ### Getter/setter ??? Protect current_ammo and mag ???
+        self.ammo_capacity = (level - 1) * MAGAZINE          
+        self.current_ammo = self.ammo_capacity
         self.current_mag = MAGAZINE
         self.image = _6rds
         self.rect = self.image.get_rect()                               ### Display functionality called via testbed (like DuckDuckGo)
@@ -100,28 +103,12 @@ class Gun(pg.sprite.Sprite):
         '''
         if self.current_mag > 0:
             self.current_mag -= 1
-            if self.current_mag == 5:
-                self.image = _5rds
-                self.rect = self.image.get_rect()
-            elif self.current_mag == 4:
-                self.image = _4rds
-                self.rect = self.image.get_rect()
-            elif self.current_mag == 3:
-                self.image - _3rds
-                self.rect = self.image.get_rect()
-            elif self.current_mag == 2:
-                self.image = _2rds
-                self.rect = self.image.get_rect()
-            elif self.current_mag == 1:
-                self.image = _1rds
-                self.rect = self.image.get_rect()
-            else:
-                self.image = _0rds
-                self.rect = self.image.get_rect()
+            self.update()
+            self.rect = self.image.get_rect(topright=self.rect.topright)
             return self.firing_sound.play()
         else:
             self.image = _0rds
-            self.rect = self.image.get_rect()
+            self.rect = self.image.get_rect(topright=self.rect.topright)
             return self.click_sound.play()
 
     def reload(self):
@@ -141,14 +128,46 @@ class Gun(pg.sprite.Sprite):
             if remaining >= delta:
                 self.current_ammo -= delta
                 self.current_mag = MAGAZINE
-                return reload_sound.play()
+                return self.reload_sound.play()
             else:
                 self.current_mag += remaining
                 self.current_ammo = 0
-                return reload_sound.play()
+                return self.reload_sound.play()
 
-    #def update(self):
-        # TO DO
+    def update(self):
+        '''
+        Update method syncs the gun image to match current magazine state every frame.
+        '''
+        if self.current_mag == 6:
+            self.image = _6rds
+        elif self.current_mag == 5:
+            self.image = _5rds
+        elif self.current_mag == 4:
+            self.image = _4rds
+        elif self.current_mag == 3:
+            self.image = _3rds
+        elif self.current_mag == 2:
+            self.image = _2rds
+        elif self.current_mag == 1:
+            self.image = _1rds
+        else:
+            self.image = _0rds
+
+    def render_ammo_display(self, surface, position):
+        '''
+        Render the ammo display (title and count) at the given position.
+        '''
+        # Small font for title, medium font for count
+        small_font = pg.font.Font(None, 20)
+        medium_font = pg.font.Font(None, 32)
+        
+        # Render title
+        title_text = small_font.render(" Total \n Rounds \n Remaining", True, (0, 0, 0))
+        surface.blit(title_text, position)
+        
+        # Render count below title
+        count_text = medium_font.render(str(self.current_ammo), True, (0, 0, 0))
+        surface.blit(count_text, (position[0] + 5, position[1] + 50))
 
 #####################################################
 ##### MAIN BLOCK ####################################

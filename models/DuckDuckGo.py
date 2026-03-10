@@ -7,7 +7,7 @@
 # - Rendering and updating sprites in game loop
 #
 # Winter 2026
-# Last updated: 9 March 2026
+# Last updated: 10 March 2026
 #
 # Author: Capt Connor Williams
 
@@ -37,6 +37,7 @@ pg.display.set_caption("Duck Hunt - Sprite Test Engine")
 
 # Now import Duck classes after display is created
 from Duck import NormalDuck, SuperDuck, Duck
+from Gun import Gun
 
 
 #####################################################
@@ -56,18 +57,23 @@ class TestGameEngine:
         self.running = True
         self.fps = FPS
         
+        # Level progression (set early for sprite initialization)
+        self.level = 1
+        self.max_level = 2
+        
         # Sprite groups for management
         self.all_sprites = pg.sprite.Group()
         self.ducks = pg.sprite.Group()
+        
+        # Initialize gun
+        self.gun = Gun(level=self.level)
+        self.gun.rect.topright = (SCREEN_WIDTH - 10, 10)  # Position at top right with 10px margin
+        self.all_sprites.add(self.gun)
         
         # 10-second timer for auto-flying ducks off screen
         self.timer_duration = 10 * FPS  # 10 seconds in frames (600 frames at 60 FPS)
         self.timer = self.timer_duration
         self.timer_expired = False
-        
-        # Level progression
-        self.level = 1
-        self.max_level = 2
         
         # Initialize sprites
         self.init_sprites()
@@ -113,11 +119,17 @@ class TestGameEngine:
                 if event.key == pg.K_ESCAPE:
                     self.running = False
                 elif event.key == pg.K_SPACE:
-                    # Reset ducks on spacebar press
+                    # Reload gun on spacebar press
+                    self.gun.reload()
+                elif event.key == pg.K_r:
+                    # Reset ducks on 'R' key press
                     self.reset_sprites()
     
     def handle_mouse_click(self, mouse_pos):
         """Handle clicking on sprites."""
+        # Fire the gun
+        self.gun.shoot()
+        
         clicked_sprites = [sprite for sprite in self.ducks if sprite.rect.collidepoint(mouse_pos)]
         
         for sprite in clicked_sprites:
@@ -143,11 +155,18 @@ class TestGameEngine:
     
     def reset_sprites(self):
         """Reset all sprites to alive state and reset timer."""
+        # Remove old gun before clearing sprite groups
+        if self.gun in self.all_sprites:
+            self.all_sprites.remove(self.gun)
         self.all_sprites.empty()
         self.ducks.empty()
         self.timer = self.timer_duration
         self.timer_expired = False
         self.init_sprites()
+        # Recreate gun for new level
+        self.gun = Gun(level=self.level)
+        self.gun.rect.topright = (SCREEN_WIDTH - 10, 10)
+        self.all_sprites.add(self.gun)
         print(f"Sprites reset! Level: {self.level}")
     
     def update(self):
@@ -182,6 +201,12 @@ class TestGameEngine:
                 self.level += 1
                 print(f"\n*** LEVEL {self.level} COMPLETE! Advancing... ***\n")
                 self.init_sprites()
+                # Remove old gun and recreate for new level
+                if self.gun in self.all_sprites:
+                    self.all_sprites.remove(self.gun)
+                self.gun = Gun(level=self.level)
+                self.gun.rect.topright = (SCREEN_WIDTH - 10, 10)
+                self.all_sprites.add(self.gun)
                 # Reset timer for next level
                 self.timer = self.timer_duration
                 self.timer_expired = False
@@ -211,8 +236,11 @@ class TestGameEngine:
         
         # Draw instructions
         small_font = pg.font.Font(None, 24)
-        instructions = small_font.render("Click to shoot | SPACE to reset | ESC to quit", True, (0, 0, 0))
+        instructions = small_font.render("Click to shoot | SPACE to reload | R to reset | ESC to quit", True, (0, 0, 0))
         self.screen.blit(instructions, (10, 90))
+        
+        # Draw gun ammo display
+        self.gun.render_ammo_display(self.screen, (SCREEN_WIDTH - 150, 100))
         
         # Update display
         pg.display.flip()
