@@ -64,7 +64,7 @@ except pg.error as e:
 BASE_SPEED = 2
 SPEED_MULTIPLIER = 2
 BASE_DIRECTION_CHANGE_INTERVAL = 60
-DIRECTION_CHANGE_MULTIPLIER = 12
+DIRECTION_CHANGE_MULTIPLIER = 6
 
 # Sprite rendering constants
 DUCK_SPRITE_SIZE = 90
@@ -186,7 +186,7 @@ class Duck(pg.sprite.Sprite):
             elif dx < 0:
                 self.facing_right = False
 
-    def calcnewpos(self, rect, level):
+    def calcnewpos(self, rect):
         '''
         Calculate new position using smooth movement with occasional direction changes.
         Keeps duck on screen while alive.

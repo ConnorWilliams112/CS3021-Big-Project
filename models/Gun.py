@@ -82,7 +82,7 @@ class Gun(pg.sprite.Sprite):
     '''
     def __init__(self, level):
         super().__init__()
-        self.ammo_capacity = (level - 1) * MAGAZINE          
+        self.ammo_capacity = MAGAZINE + (level - 1) * MAGAZINE      
         self.current_ammo = self.ammo_capacity
         self.current_mag = MAGAZINE
         self.image = _6rds
