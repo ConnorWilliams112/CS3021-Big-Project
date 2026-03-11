@@ -186,7 +186,7 @@ class Duck(pg.sprite.Sprite):
             elif dx < 0:
                 self.facing_right = False
 
-    def calcnewpos(self, rect):
+    def calcnewpos(self, rect, level):
         '''
         Calculate new position using smooth movement with occasional direction changes.
         Keeps duck on screen while alive.
