@@ -10,7 +10,6 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-import time
 import pygame
 
 WIDTH, HEIGHT = 960, 540
@@ -30,7 +29,7 @@ def main():
     from screens.intermediate_screen import IntermediateScreen
     from engine import game_loop
     from engine.level import Level, MAX_LEVELS
-    from persistence.save_load import load_scores, save_scores, get_top_10, submit_score
+    from persistence.save_load import load_scores
 
     high_score_table = load_scores()
 
@@ -64,9 +63,7 @@ def main():
             state = outcome   # "win" or "lose"
 
         elif state == "win":
-            submit_score(f"run_{int(time.time())}", score, high_score_table)
-            save_scores(high_score_table)
-            result = win_screen.run(screen, clock, score=score, high_scores=get_top_10(high_score_table))
+            result = win_screen.run(screen, clock, score=score, high_score_table=high_score_table)
             if result == "play_again":
                 if level_num >= MAX_LEVELS:
                     # Completed all 5 levels — restart from the beginning
@@ -80,9 +77,7 @@ def main():
                 state     = "welcome"
 
         elif state == "lose":
-            submit_score(f"run_{int(time.time())}", score, high_score_table)
-            save_scores(high_score_table)
-            result = lose_screen.run(screen, clock, score=score, high_scores=get_top_10(high_score_table))
+            result = lose_screen.run(screen, clock, score=score, high_score_table=high_score_table)
             if result == "play_again":
                 level_num = 1
                 state     = "countdown"

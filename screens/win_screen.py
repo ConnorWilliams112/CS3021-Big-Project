@@ -16,19 +16,22 @@ WIDTH, HEIGHT = 960, 540
 FPS = 60
 
 
-def run(screen, clock, score=0, high_scores=None):
+def run(screen, clock, score=0, high_score_table=None):
     """Display the You Win! screen.
 
     Args:
-        screen:      The pygame display surface passed in from the main game.
-        clock:       The pygame Clock used for framerate control.
-        score:       The player's final score to display.
-        high_scores: List of (name, score, date) tuples from get_top_10(), or None.
+        screen:           The pygame display surface passed in from the main game.
+        clock:            The pygame Clock used for framerate control.
+        score:            The player's final score to display.
+        high_score_table: The live HashTable from load_scores(); used for submission
+                          and display.
 
     Returns:
         "play_again" if the player chooses another round, or "main_menu" to
         return to the welcome screen.
     """
+    from persistence.save_load import submit_score, save_scores, get_top_10, is_top_10
+
     manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
     background_color = (0, 100, 0)  # Fallback color — remove this line once background image is set
@@ -37,17 +40,34 @@ def run(screen, clock, score=0, high_scores=None):
     score_font  = pygame.font.Font(None, 60)
     hs_hdr_font = pygame.font.Font(None, 34)
     hs_row_font = pygame.font.Font(None, 26)
+    label_font  = pygame.font.Font(None, 28)
 
+    high_scores = get_top_10(high_score_table) if high_score_table is not None else []
+    qualifying  = is_top_10(score, high_score_table) if high_score_table is not None else False
+
+    if qualifying:
+        name_entry = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((WIDTH // 2 - 110, HEIGHT // 2 + 20), (220, 36)),
+            manager=manager,
+        )
+        name_entry.set_text_length_limit(20)
+    else:
+        name_entry = None
+
+    btn_y = HEIGHT // 2 + (70 if qualifying else 30)
     play_again_button = pygame_gui.elements.UIButton(
-        relative_rect=pygame.Rect((WIDTH // 2 - 110, HEIGHT // 2 + 30), (220, 55)),
+        relative_rect=pygame.Rect((WIDTH // 2 - 110, btn_y), (220, 50)),
         text="Play Again",
         manager=manager,
     )
     main_menu_button = pygame_gui.elements.UIButton(
-        relative_rect=pygame.Rect((WIDTH // 2 - 110, HEIGHT // 2 + 100), (220, 55)),
+        relative_rect=pygame.Rect((WIDTH // 2 - 110, btn_y + 65), (220, 50)),
         text="Main Menu",
         manager=manager,
     )
+
+    submitted      = False
+    pending_return = None
 
     while True:
         time_delta = clock.tick(FPS) / 1000.0
@@ -59,11 +79,16 @@ def run(screen, clock, score=0, high_scores=None):
 
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == play_again_button:
-                    manager.clear_and_reset()
-                    return "play_again"
-                if event.ui_element == main_menu_button:
-                    manager.clear_and_reset()
-                    return "main_menu"
+                    pending_return = "play_again"
+                elif event.ui_element == main_menu_button:
+                    pending_return = "main_menu"
+
+                if pending_return and qualifying and name_entry and not submitted:
+                    player_name = name_entry.get_text().strip() or "Player"
+                    submit_score(player_name, score, high_score_table)
+                    save_scores(high_score_table)
+                    high_scores = get_top_10(high_score_table)
+                    submitted = True
 
             manager.process_events(event)
 
@@ -76,6 +101,13 @@ def run(screen, clock, score=0, high_scores=None):
 
         score_surf = score_font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_surf, score_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 25)))
+
+        if qualifying:
+            label_surf = label_font.render("Enter your name:", True, (220, 220, 220))
+            screen.blit(label_surf, label_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 5)))
+        else:
+            no_hs_surf = label_font.render("Score didn't make the top 10", True, (180, 180, 180))
+            screen.blit(no_hs_surf, no_hs_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 10)))
 
         # ── High scores panel (right side) ───────────────────────────────────
         hs_x = 635
@@ -93,6 +125,10 @@ def run(screen, clock, score=0, high_scores=None):
 
         manager.draw_ui(screen)
         pygame.display.flip()
+
+        if pending_return:
+            manager.clear_and_reset()
+            return pending_return
 
 
 if __name__ == "__main__":
