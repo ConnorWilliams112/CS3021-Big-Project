@@ -125,9 +125,10 @@ def run(screen, clock, score=0, high_score_table=None):
         screen.blit(hdr_surf, (hs_x, 95))
         pygame.draw.line(screen, (200, 200, 100), (hs_x, 128), (hs_x + 290, 128), 1)
         if high_scores:
-            for i, (_, entry_score, entry_date) in enumerate(high_scores[:10]):
+            for i, (entry_name, entry_score, entry_date) in enumerate(high_scores[:10]):
                 row_color = (255, 255, 0) if entry_score == score else (220, 220, 220)
-                row = hs_row_font.render(f"#{i + 1:<2}  {entry_score:>6} pts   {entry_date}", True, row_color)
+                name_trunc = entry_name[:11] if len(entry_name) <= 11 else entry_name[:10] + "…"
+                row = hs_row_font.render(f"#{i + 1:<2}  {name_trunc:<11} {entry_score:>6} pts", True, row_color)
                 screen.blit(row, (hs_x, 136 + i * 26))
         else:
             screen.blit(hs_row_font.render("No scores yet", True, (180, 180, 180)), (hs_x, 136))
