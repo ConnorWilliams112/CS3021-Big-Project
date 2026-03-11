@@ -77,6 +77,15 @@ def run(screen, clock, score=0, high_score_table=None):
                 pygame.quit()
                 sys.exit()
 
+            # enter name
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and qualifying and name_entry and not submitted:
+                    player_name = name_entry.get_text().strip() or "Player"
+                    submit_score(player_name, score, high_score_table)
+                    save_scores(high_score_table)
+                    high_scores = get_top_10(high_score_table)
+                    submitted = True
+
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
                 if event.ui_element == play_again_button:
                     pending_return = "play_again"
