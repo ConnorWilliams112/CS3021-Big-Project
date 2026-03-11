@@ -10,6 +10,7 @@
 import pygame
 import pygame_gui
 import sys
+import os
 
 WIDTH, HEIGHT = 960, 540
 FPS = 60
@@ -17,6 +18,8 @@ FPS = 60
 
 def run(screen, clock):
     music_on = True
+    pygame.mixer.music.load(os.path.join(os.path.dirname(__file__), "..", "models", "sounds", "game_music.mp3"))
+    pygame.mixer.music.play(-1)
 
     manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 

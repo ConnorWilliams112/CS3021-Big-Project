@@ -27,6 +27,7 @@ def main():
     # Import screens here (after pygame.init so fonts/display are ready)
     from screens import welcome_screen, landscape_selector_screen, countdown_screen
     from screens import win_screen, lose_screen
+    from screens.intermediate_screen import IntermediateScreen
     from engine import game_loop
     from engine.level import Level, MAX_LEVELS
     from persistence.save_load import load_scores, save_scores, get_top_10, submit_score
@@ -88,6 +89,17 @@ def main():
             else:
                 level_num = 1
                 state     = "welcome"
+
+        elif state == "intermediate":
+            from screens.intermediate_screen import IntermediateScreen
+            inter_screen = IntermediateScreen(screen, landscape)
+            result = inter_screen.run()
+            if result == "next":
+                level_num += 1
+                state = "countdown"
+            else:
+                pygame.quit()
+                sys.exit()
 
         else:
             state = "welcome"

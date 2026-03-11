@@ -20,7 +20,7 @@ from data_structures.my_queue import Queue
 from engine.level import Level
 from engine.score import calculate_score
 from models.Duck import NormalDuck, SuperDuck
-#from models.Gun import Gun
+from models.Gun import Gun
 from screens import overlay
 
 WIDTH, HEIGHT = 960, 540
@@ -57,8 +57,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         bg = None
     fallback_color = (34, 85, 34)
 
-    # Game objects
-    #gun    = Gun("Shotgun", ammo_capacity=10)           #Fix
+    #Initialize the gun for the game
+    gun = Gun(level.number)
 
     hits        = 0
     misses      = 0
@@ -84,14 +84,14 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
                 sys.exit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_r or event.key == pygame.K_SPACE:
                     gun.reload()
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if gun.current_ammo > 0:
+                if gun.current_mag > 0:
                     mx, my    = pygame.mouse.get_pos()
                     shot_rect = pygame.Rect(mx - 5, my - 5, 10, 10)
-                    hit_list  = [d for d in active_ducks if not d.is_dead and d.rect.colliderect(shot_rect)]
+                    hit_list  = [d for d in active_ducks if d.life and d.rect.colliderect(shot_rect)]
                     if hit_list:
                         for duck in hit_list:
                             killed = duck.shoot()
@@ -100,23 +100,25 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
                     else:
                         misses += 1
                     gun.shoot()
+                else:
+                    gun.shoot()
 
         # ── Spawn ─────────────────────────────────────────────────────────────
         while not spawn_queue.empty() and spawn_queue.read() <= elapsed:
             spawn_queue.dequeue()
             is_special = random.random() < level.special_duck_chance
             if is_special:
-                active_ducks.add(SuperDuck(level=level.number, speed=level.duck_speed))
+                active_ducks.add(SuperDuck(level.number))
             else:
-                active_ducks.add(NormalDuck(level=level.number, speed=level.duck_speed))
+                active_ducks.add(NormalDuck(level.number))
 
         # ── Update ────────────────────────────────────────────────────────────
+        #Call duck update method from ducks.py for movements and animation
         active_ducks.update()
 
         for duck in list(active_ducks):
             if duck._should_remove:
                 if duck.escaped:
-                    #player.take_damage(1)
                     pass
                 active_ducks.remove(duck)
 
@@ -127,11 +129,14 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
             screen.fill(fallback_color)
 
         active_ducks.draw(screen)
+
+        #Update the gun display
+        gun.update()
+        screen.blit(gun.image, (800, 10))
+        gun.render_ammo_display(screen, (750, 10))  #Display of ammo mag on screen
         overlay.draw(
             screen,
             score          = score,
-            #lives          = max(0, player.health),
-            #sammo           = gun.current_ammo,
             time_remaining = time_remaining,
         )
         pygame.display.flip()
@@ -145,4 +150,4 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
 
         # All ducks cleared and score threshold met → win early
         if spawn_queue.empty() and len(active_ducks) == 0 and score >= level.point_threshold:
-            return "win", score
+            return "intermediate", score
