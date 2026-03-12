@@ -142,12 +142,13 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         pygame.display.flip()
 
         # ── Win / Lose checks ─────────────────────────────────────────────────
-        #if not player.is_alive:         #Get rid of
-            #return "lose", score
-
         if time_remaining <= 0:
             return ("win" if score >= level.point_threshold else "lose"), score
 
         # All ducks cleared and score threshold met → win early
-        if spawn_queue.empty() and len(active_ducks) == 0 and score >= level.point_threshold:
-            return "intermediate", score
+        if spawn_queue.empty() and len(active_ducks) == 0:
+            return ("intermediate" if score >= level.point_threshold else "lose"), score
+
+        #Player runs out of ammo and ducks still left, they lose
+        if gun.current_ammo == 0 and gun.current_mag ==0 and len(active_ducks) > 0:
+            return "lose", score
