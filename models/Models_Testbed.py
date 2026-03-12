@@ -1,4 +1,4 @@
-# DuckDuckGo.py
+# Models_Testbed.py
 # Test Game Engine for CS3021 Big Project
 #
 # Simple game engine to test sprite functionality including:
