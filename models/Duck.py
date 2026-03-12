@@ -350,4 +350,4 @@ class SuperDuck(Duck):
 #####################################################
 
 if __name__ == "__main__":
-    print("This module is not meant to be run directly. Please run DuckDuckGo.py to play the game.")
+    print("This module is not meant to be run directly. Please run Models_Testbed.py to test Duck() functionality.")

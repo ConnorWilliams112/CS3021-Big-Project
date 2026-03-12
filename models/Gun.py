@@ -2,10 +2,11 @@
 # Gun module of CS3021 Big Project
 #
 # Contains Gun class for handling cursor functionality
-# 
+# Includes sound effects, ammo displayed via a gun image, and reloading logic 
+#
 #
 # Winter 2026
-# Last updated: 10 March 2026
+# Last updated: 11 March 2026
 #
 # Author: Capt Connor Williams
 
@@ -53,8 +54,13 @@ except pg.error as er:
 # Gun display constants
 GUN_WIDTH = 140
 GUN_HEIGHT = 80
+MAGAZINE = 6
+SMALL_FONT = 20
+BIG_FONT = 32
+HOR_BUFFER = 5
+VERT_BUFFER = 50
 
-# Scale all gun images to GUN dimensions
+# Scale all gun images to gun dimensions
 _6rds = pg.transform.scale(_6rds, (GUN_WIDTH, GUN_HEIGHT))
 _5rds = pg.transform.scale(_5rds, (GUN_WIDTH, GUN_HEIGHT))
 _4rds = pg.transform.scale(_4rds, (GUN_WIDTH, GUN_HEIGHT))
@@ -63,8 +69,6 @@ _2rds = pg.transform.scale(_2rds, (GUN_WIDTH, GUN_HEIGHT))
 _1rds = pg.transform.scale(_1rds, (GUN_WIDTH, GUN_HEIGHT))
 _0rds = pg.transform.scale(_0rds, (GUN_WIDTH, GUN_HEIGHT))
 
-MAGAZINE = 6
-
 #####################################################
 ##### Gun Class #####################################
 #####################################################
@@ -72,11 +76,11 @@ MAGAZINE = 6
 class Gun(pg.sprite.Sprite):
     '''
     Class container for gun/magazine logic. Initializes a round counter at top right of screen that decrements with reloads.
-    Also has magazine/tube bar that decrements with mouseclick 
+    Also has revolver cylinder that decrements with mouseclick 
 
     Start with BASE + (level - 1) * 6 rounds
-    "Magazine" holds 6rds (shotgun tube)
-    Spacebar reloads, decrements total,
+    "Magazine" holds 6rds
+    Spacebar reloads, decrements total
 
     Spacebar and mouseclick functionality lives in game engine, calls methods that exist in the class
     '''
@@ -86,7 +90,7 @@ class Gun(pg.sprite.Sprite):
         self.current_ammo = self.ammo_capacity
         self.current_mag = MAGAZINE
         self.image = _6rds
-        self.rect = self.image.get_rect()                               ### Display functionality called via testbed (like DuckDuckGo)
+        self.rect = self.image.get_rect()
         try:
             self.reload_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Reloading.mp3'))
             self.firing_sound = pg.mixer.Sound(os.path.join(SOUND_DIR, 'Firing.mp3'))
@@ -95,6 +99,23 @@ class Gun(pg.sprite.Sprite):
             print(f"Error loading sound: {e}")
             print(f"Looking for sounds in: {SOUND_DIR}")
             exit()
+
+    #####################################################
+    ##### Standard dunder override methods Block ########
+    #####################################################
+
+    # Accepting default hash, eq, neq behaviors due to not needing
+    # to compare guns (as there is only ever 1 gun instance at a time)
+
+    # Accepting default copy and deepcopy behaviors since we don't need to create copies of guns in our game logic, 
+    # and the default behavior of copying the sprite's attributes is sufficient for our purposes.
+
+    # Accepting default str behavior since we won't be printing gun instances directly, 
+    # and the default representation is sufficient for debugging purposes.
+
+    #####################################################
+    ##### Custom Behaviors Block ########################
+    #####################################################
 
     def shoot(self):
         '''
@@ -158,8 +179,8 @@ class Gun(pg.sprite.Sprite):
         Render the ammo display (title and count) at the given position.
         '''
         # Small font for title, medium font for count
-        small_font = pg.font.Font(None, 20)
-        medium_font = pg.font.Font(None, 32)
+        small_font = pg.font.Font(None, SMALL_FONT)
+        medium_font = pg.font.Font(None, BIG_FONT)
         
         # Render title
         title_text = small_font.render(" Total \n Rounds \n Remaining", True, (0, 0, 0))
@@ -167,12 +188,11 @@ class Gun(pg.sprite.Sprite):
         
         # Render count below title
         count_text = medium_font.render(str(self.current_ammo), True, (0, 0, 0))
-        surface.blit(count_text, (position[0] + 5, position[1] + 50))
+        surface.blit(count_text, (position[0] + HOR_BUFFER, position[1] + VERT_BUFFER))
 
 #####################################################
 ##### MAIN BLOCK ####################################
 #####################################################
 
 if __name__ == "__main__":
-    
-    pass
+    print("This module is not meant to be run directly. Please run Models_Testbed.py to test Gun() functionality.")
