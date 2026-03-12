@@ -40,6 +40,11 @@ def run(screen, clock):
 
     title_font = pygame.font.Font(None, 100)
 
+    # Font for instructions
+    instructions_font = pygame.font.Font(None, 32)
+    instructions_text = "HOW TO PLAY: Aim with mouse, left click to shoot, press spacebar to reload."
+    instructions_color = (255, 255, 255)
+
     while True:
         time_delta = clock.tick(FPS) / 1000.0
 
@@ -75,7 +80,19 @@ def run(screen, clock):
         title_surf = title_font.render("DUCK HUNTER", True, (255, 255, 255))
         screen.blit(title_surf, title_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 120)))
 
+        # Draw UI elements
         manager.draw_ui(screen)
+
+        # Draw instructions textbox at the bottom
+        instructions_surf = instructions_font.render(instructions_text, True, instructions_color)
+        instructions_rect = instructions_surf.get_rect(center=(WIDTH // 2, HEIGHT - 30))
+        # Draw a semi-transparent background for the textbox
+        textbox_rect = pygame.Rect(instructions_rect.left - 10, instructions_rect.top - 5, instructions_rect.width + 20, instructions_rect.height + 10)
+        s = pygame.Surface((textbox_rect.width, textbox_rect.height), pygame.SRCALPHA)
+        s.fill((0, 0, 0, 150))  # Black with alpha for transparency
+        screen.blit(s, (textbox_rect.left, textbox_rect.top))
+        screen.blit(instructions_surf, instructions_rect)
+
         pygame.display.flip()
 
 
