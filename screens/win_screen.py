@@ -120,16 +120,16 @@ def run(screen, clock, score=0, high_score_table=None):
 
         # ── High scores panel (right side) ───────────────────────────────────
         hs_x = 635
-        pygame.draw.rect(screen, (0, 70, 0), pygame.Rect(hs_x - 10, 88, 310, 310), border_radius=6)
+        pygame.draw.rect(screen, (0, 70, 0), pygame.Rect(hs_x - 10, 188, 310, 310), border_radius=6)
         hdr_surf = hs_hdr_font.render("HIGH SCORES", True, (255, 255, 100))
-        screen.blit(hdr_surf, (hs_x, 95))
-        pygame.draw.line(screen, (200, 200, 100), (hs_x, 128), (hs_x + 290, 128), 1)
+        screen.blit(hdr_surf, (hs_x, 195))
+        pygame.draw.line(screen, (200, 200, 100), (hs_x, 228), (hs_x + 290, 228), 1)
         if high_scores:
             for i, (entry_name, entry_score, entry_date) in enumerate(high_scores[:10]):
                 row_color = (255, 255, 0) if entry_score == score else (220, 220, 220)
                 name_trunc = entry_name[:11] if len(entry_name) <= 11 else entry_name[:10] + "…"
                 row = hs_row_font.render(f"#{i + 1:<2}  {name_trunc:<11} {entry_score:>6} pts", True, row_color)
-                screen.blit(row, (hs_x, 136 + i * 26))
+                screen.blit(row, (hs_x, 236 + i * 26))
         else:
             screen.blit(hs_row_font.render("No scores yet", True, (180, 180, 180)), (hs_x, 136))
 
