@@ -12,8 +12,8 @@ Below is a summary of required and optional techniques included in the project:
 # Basic Object Functionality:
   HashTable and Queue use private attributes, @property getters, and __str__.
   Duck uses super().__init__() and encapsulated state attributes.
-  - data_structures/my_hashtable.py: 16-51  (class definition, __init__, _hash, @property getters, __str__)
-  - data_structures/my_queue.py: 16-41      (Queue __init__, @property data/size, __str__)
+  - data_structures/my_hashtable.py: 16-51  (class definition, __init__, _hash, @property getters, __str__, __copy__)
+  - data_structures/my_queue.py: 16-41      (Queue __init__, @property data/size, __str__, __copy__)
   - models/Duck.py: 99-133                  (Duck.__init__ with super(), attribute encapsulation, velocity init)
 
 
