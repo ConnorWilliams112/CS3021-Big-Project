@@ -9,9 +9,8 @@ Below is a summary of required and optional techniques included in the project:
 # #######################################################
 
 # Basic Object Functionality:
-  HashTable and Queue use private attributes with @property getters for read-only access and a __str__ method. 
-  Duck demonstrates best-practice construction with super().__init__(),
-  encapsulated state attributes, and computed velocity initialisation (trigonometry on a random angle).
+  HashTable and Queue use private attributes, @property getters, and __str__.
+  Duck uses super().__init__() and encapsulated state attributes.
   - data_structures/my_hashtable.py: 16-51  (class definition, __init__, _hash, @property getters, __str__)
   - data_structures/my_queue.py: 16-41      (Queue __init__, @property data/size, __str__)
   - models/Duck.py: 99-133                  (Duck.__init__ with super(), attribute encapsulation, velocity init)
@@ -24,9 +23,7 @@ Below is a summary of required and optional techniques included in the project:
 
 
 # Basic Inheritance:
-  NormalDuck and SuperDuck both inherit from the abstract Duck base class, overriding update()
-  while calling super().__init__() and super().update() to use shared movement logic.
-  Duck and Gun themselves inherit from pygame.sprite.Sprite.
+  NormalDuck and SuperDuck inherit from Duck; Duck and Gun inherit from pygame.sprite.Sprite.
   - models/Duck.py: 93   (class Duck(pygame.sprite.Sprite))
   - models/Duck.py: 248  (class NormalDuck(Duck) — calls super().__init__ line 254, super().update line 272)
   - models/Duck.py: 279  (class SuperDuck(Duck) — calls super().__init__ line 286, super().update line 345)
@@ -39,13 +36,12 @@ Below is a summary of required and optional techniques included in the project:
 
 
 # Functional programming:
-  get_top_10 defines get_score() as a named function and passes it by name as the key= argument
-  to sorted(), alongside zip() to pair HashTable keys with values before sorting.
-  - engine/score.py: 80-85  (get_score named function defined and passed to sorted() as key=)
+  get_score() defined as a named function and passed by name as key= argument to sorted().
+  - engine/score.py: 80-85  (get_score named function passed to sorted() as key=)
 
 
 # Unit tests for non-GUI functions:
-  - data_structures/my_hashtable.py: 164-277  (TestHashTable — init, set/get, delete, has_key, keys/values, copy)
+  - data_structures/my_hashtable.py: 164-294  (TestHashTable — init, set/get, delete, has_key, keys/values, copy, iter)
   - data_structures/my_queue.py: 99-207       (TestQueue — enqueue, dequeue, FIFO ordering, edge cases)
   - engine/score.py: 114-218                  (TestScore — calculate_score, submit_score, get_top_10, load/save)
 
@@ -58,22 +54,19 @@ Below is a summary of required and optional techniques included in the project:
 
 
 # Use of two data structures:
-  HashTable for high-score table persistence
-  Queue used for spawning ducks
+  HashTable for high-score persistence; Queue for duck spawn scheduling.
   - data_structures/my_hashtable.py  (full HashTable implementation with chaining collision resolution)
   - data_structures/my_queue.py      (full FIFO Queue implementation)
-  - engine/game_loop.py: 70-72        (Queue instantiated for duck spawn schedule)
-  - engine/game_loop.py: 107-108      (Queue.dequeue() called to release next duck)
-  - engine/score.py: 50-74            (HashTable used in load_scores / save_scores)
+  - engine/game_loop.py: 70-72       (Queue instantiated for duck spawn schedule)
+  - engine/game_loop.py: 107-108     (Queue.dequeue() called to release next duck)
+  - engine/score.py: 50-74           (HashTable used in load_scores / save_scores)
 
-# ####################################################### 
+# #######################################################
 # OPTIONAL TECHNIQUES
 # #######################################################
 
 # Significant functional programming use:
-  Beyond the key=lambda sort, the codebase uses list comprehensions as the primary iteration
-  tool, any() with a generator expression, and all() for multi-condition checks to minimize
-  explicit for-loops.
+  list comprehensions, any(), all(), and sum() with generators throughout.
   - data_structures/my_hashtable.py: 119     (has_key uses any() with generator expression)
   - data_structures/my_hashtable.py: 125-131 (keys() and values() built with list comprehensions)
   - engine/game_loop.py: 94                  (hit detection via list comprehension over sprite group)
@@ -81,32 +74,26 @@ Below is a summary of required and optional techniques included in the project:
 
 
 # Grab-bag topic techniques:
-  HashTable.__iter__ is a generator using yield to lazily produce each (key, value) pair
-  one at a time, allowing the table to be used directly in for-loops and other iteration contexts.
+  HashTable.__iter__ is a generator using yield to iterate over (key, value) pairs.
   - data_structures/my_hashtable.py: 150-156  (HashTable.__iter__ generator with yield)
 
 
 # Use of a Framework or Library not covered in class:
-  pygame_gui is a separate library built on Pygame used for button menus and the name entry text field.
-  math library used for duck movements
+  pygame_gui: ready-made UI widgets for button menus and text entry.
+  math: for duck movement logic
   - screens/welcome_screen.py: 24-36   (UIManager creation, UIButton for Play/Exit/Music)
   - screens/win_screen.py: 49-53       (UITextEntryLine for player name input)
   - models/Duck.py: 203-207            (math.cos and math.sin for duck movement)
 
 
 # Data export and/or persistence:
-  Score records are serialised to JSON on every submission and deserialised on startup so the
-  all-time leaderboard survives between sessions.
+  Scores serialised to JSON on submission and loaded on startup for the leaderboard.
   - engine/score.py: 38-74          (load_scores reads JSON → HashTable; save_scores writes HashTable → JSON)
   - persistence/scores.json         (live high-score data file)
   - screens/win_screen.py: 84-98    (win screen calls submit_score which triggers save_scores)
 
 
 # Clever / useful techniques:
-  Duck animation is driven by frame-counter parity — no animation library needed. NormalDuck and
-  SuperDuck swap between two pre-loaded sprite images (including mirrored flip variants) based on
-  a frame counter, giving smooth wing-flap motion at zero runtime cost.
-  SuperDuck tracks hit-points and requires multiple shots, demonstrating polymorphic behaviour on
-  top of the inherited Duck interface.
+  Frame-counter parity drives duck wing-flap animation; SuperDuck tracks hit-points for multi-shot kills.
   - models/Duck.py: 266-270  (NormalDuck image swap on frame parity)
   - models/Duck.py: 301-343  (SuperDuck hit-point system and multi-image animation cycle)
