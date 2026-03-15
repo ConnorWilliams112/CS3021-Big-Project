@@ -1,6 +1,18 @@
 # CS3021-Big-Project
+# Keusch - Schnabel - Williams
+# Last Edited: 15 March 2026
 Duck/Buck Hunter Project
 
+# BASIC INSTRUCTIONS
+
+
+
+# GAME INSTRUCTIONS
+
+
+
+
+# FILE ORGANIZATION
 duck_hunter/
 │
 ├── main.py                  # Entry point. Creates GameManager, calls .run()

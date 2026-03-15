@@ -147,6 +147,14 @@ class HashTable(object):
         return "HashTable: {" + ", ".join(pairs) + "}"
 
 
+    def __iter__(self):
+        '''Generator that yields each (key, value) pair in the hash table.'''
+
+        for bucket in self.__data:
+            for pair in bucket:
+                yield pair
+
+
     def copy(self):
         '''Returns a shallow copy of the hash table.'''
 
@@ -274,6 +282,17 @@ class TestHashTable(unittest.TestCase):
         ht2 = self.ht.copy()
         ht2.set("bob", 200)
         self.assertFalse(self.ht.has_key("bob"))
+
+    # __iter__
+
+    def test_iter_yields_all_pairs(self):
+        self.ht.set("alice", 100)
+        self.ht.set("bob", 200)
+        result = list(self.ht)
+        self.assertEqual(sorted(result), [("alice", 100), ("bob", 200)])
+
+    def test_iter_empty_table(self):
+        self.assertEqual(list(self.ht), [])
 
 
 if __name__ == '__main__':

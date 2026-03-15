@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Read(//c/Users/mjsch/Downloads/**)",
+      "Bash(unzip -o func-GB_03-9.zip -d func-GB_03-9)",
+      "Bash(python -m pytest data_structures/my_hashtable.py -v)",
+      "Bash(python data_structures/my_hashtable.py)"
     ]
   }
 }

@@ -77,8 +77,11 @@ def save_scores(table: HashTable, filepath: str = SCORE_FILE) -> None:
 def get_top_10(table: HashTable) -> list:
     '''Return a sorted list of the top 10 (name, score, date) tuples, highest score first.'''
 
+    def get_score(entry):
+        return entry[1]['score']
+
     all_entries = list(zip(table.keys(), table.values()))
-    sorted_entries = sorted(all_entries, key=lambda entry: entry[1]['score'], reverse=True)
+    sorted_entries = sorted(all_entries, key=get_score, reverse=True)
     return [(name, val['score'], val['date']) for name, val in sorted_entries[:TOP_N]]
 
 
