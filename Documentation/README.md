@@ -5,11 +5,22 @@
 Duck/Buck Hunter Project
 
 # BASIC INSTRUCTIONS
+## Requirements:
+- Python 3.13.x (pygame 2.6.1 is not compatible with Python 3.14+)
+- pygame 2.6.1 installed
+- pygame_gui 0.6.14 installed
+- python-i18n 0.3.9 installed
 
+## To run the game:
+- run from project root directory:
+
+python engine/game_engine.py
 
 
 # GAME INSTRUCTIONS
-
+Aim:    mouse / mousepad
+Shoot:  left-click
+Reload: 'R' or 'Space'
 
 
 
