@@ -52,13 +52,14 @@ except pg.error as er:
 #####################################################
 
 # Gun display constants
-GUN_WIDTH = 140
-GUN_HEIGHT = 80
-MAGAZINE = 6
-SMALL_FONT = 20
-BIG_FONT = 32
-HOR_BUFFER = 5
+GUN_WIDTH   = 140
+GUN_HEIGHT  = 80
+MAGAZINE    = 6
+SMALL_FONT  = 20
+BIG_FONT    = 32
+HOR_BUFFER  = 5
 VERT_BUFFER = 50
+COLOR_BLACK = (0, 0, 0)
 
 # Scale all gun images to gun dimensions
 _6rds = pg.transform.scale(_6rds, (GUN_WIDTH, GUN_HEIGHT))
@@ -159,7 +160,7 @@ class Gun(pg.sprite.Sprite):
         '''
         Update method syncs the gun image to match current magazine state every frame.
         '''
-        if self.current_mag == 6:
+        if self.current_mag == MAGAZINE:
             self.image = _6rds
         elif self.current_mag == 5:
             self.image = _5rds
@@ -183,11 +184,11 @@ class Gun(pg.sprite.Sprite):
         medium_font = pg.font.Font(None, BIG_FONT)
         
         # Render title
-        title_text = small_font.render(" Total \n Rounds \n Remaining", True, (0, 0, 0))
+        title_text = small_font.render(" Total \n Rounds \n Remaining", True, COLOR_BLACK)
         surface.blit(title_text, position)
-        
+
         # Render count below title
-        count_text = medium_font.render(str(self.current_ammo), True, (0, 0, 0))
+        count_text = medium_font.render(str(self.current_ammo), True, COLOR_BLACK)
         surface.blit(count_text, (position[0] + HOR_BUFFER, position[1] + VERT_BUFFER))
 
 #####################################################

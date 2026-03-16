@@ -11,8 +11,19 @@ import pygame
 import pygame_gui
 import sys
 
-WIDTH, HEIGHT = 960, 540
-FPS = 60
+# MACROS
+BG_COLOR                  = (70, 130, 180)  # steel blue
+COLOR_WHITE               = (255, 255, 255)
+FONT_SIZE_TITLE           = 72
+LANDSCAPE_BUTTON_WIDTH    = 180
+LANDSCAPE_BUTTON_HEIGHT   = 55
+LANDSCAPE_BUTTON_GAP      = 28
+LANDSCAPE_BUTTON_Y_OFFSET = 20              # pixels below center
+BACK_BUTTON_MARGIN        = 30              # top-left corner x and y
+BACK_BUTTON_WIDTH         = 120
+BACK_BUTTON_HEIGHT        = 45
+WIDTH, HEIGHT             = 960, 540
+FPS                       = 60
 
 # Landscape options: (button label, return key)
 LANDSCAPES = [
@@ -36,17 +47,14 @@ def run(screen, clock):
     manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
    
-    background_color = (70, 130, 180)  # Fallback color — remove this line once background image is set
-
-   
-    title_font = pygame.font.Font(None, 72)
+    title_font = pygame.font.Font(None, FONT_SIZE_TITLE)
 
     # Lay out landscape buttons in a centered row
-    btn_w, btn_h = 180, 55
-    gap = 28
+    btn_w, btn_h = LANDSCAPE_BUTTON_WIDTH, LANDSCAPE_BUTTON_HEIGHT
+    gap = LANDSCAPE_BUTTON_GAP
     total_w = len(LANDSCAPES) * btn_w + (len(LANDSCAPES) - 1) * gap
     start_x = (WIDTH - total_w) // 2
-    btn_y = HEIGHT // 2 + 20
+    btn_y = HEIGHT // 2 + LANDSCAPE_BUTTON_Y_OFFSET
 
     landscape_buttons = {}
     for i, (label, key) in enumerate(LANDSCAPES):
@@ -55,7 +63,7 @@ def run(screen, clock):
         landscape_buttons[btn] = key
 
     back_button = pygame_gui.elements.UIButton(
-        relative_rect=pygame.Rect((30, 30), (120, 45)),
+        relative_rect=pygame.Rect((BACK_BUTTON_MARGIN, BACK_BUTTON_MARGIN), (BACK_BUTTON_WIDTH, BACK_BUTTON_HEIGHT)),
         text="Back",
         manager=manager,
     )
@@ -80,9 +88,9 @@ def run(screen, clock):
             manager.process_events(event)
 
         manager.update(time_delta)
-        screen.fill(background_color)      # Remove this line once background image is set
+        screen.fill(BG_COLOR)      # Remove this line once background image is set
 
-        title_surf = title_font.render("Select Your Landscape", True, (255, 255, 255))
+        title_surf = title_font.render("Select Your Landscape", True, COLOR_WHITE)
         screen.blit(title_surf, title_surf.get_rect(center=(WIDTH // 2, HEIGHT // 3)))
 
        

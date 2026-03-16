@@ -12,8 +12,61 @@ import pygame
 import pygame_gui
 import sys
 
-WIDTH, HEIGHT = 960, 540
-FPS = 60
+# MACROS
+WIDTH, HEIGHT         = 960, 540
+FPS                   = 60
+
+# Colors
+BG_COLOR              = (0, 100, 0)     # green
+COLOR_TITLE           = (255, 255, 100) # pale yellow
+COLOR_WHITE           = (255, 255, 255)
+COLOR_LABEL           = (220, 220, 220) # light gray
+COLOR_MUTED           = (180, 180, 180) # gray
+COLOR_HS_PANEL        = (0, 70, 0)      # dark green
+COLOR_HS_LINE         = (200, 200, 100) # muted yellow
+COLOR_HIGHLIGHT       = (255, 255, 0)   # yellow, current score row
+
+# Fonts
+FONT_SIZE_TITLE       = 120
+FONT_SIZE_SCORE       = 60
+FONT_SIZE_HS_HEADER   = 34
+FONT_SIZE_HS_ROW      = 26
+FONT_SIZE_LABEL       = 28
+
+# Layout
+TITLE_Y_OFFSET        = 110            # pixels above center
+SCORE_Y_OFFSET        = 25             # pixels above center
+LABEL_Y_OFFSET        = 5              # pixels below center
+NO_HS_Y_OFFSET        = 10             # pixels below center
+
+# Name entry
+ENTRY_WIDTH           = 220            # shared by name entry and buttons
+ENTRY_X_OFFSET        = 110            # half entry/button width, for centering
+NAME_ENTRY_Y_OFFSET   = 20             # pixels below center
+NAME_ENTRY_HEIGHT     = 36
+NAME_MAX_LENGTH       = 20
+
+# Buttons
+QUALIFYING_BTN_Y_OFFSET = 70           # pixels below center when qualifying
+DEFAULT_BTN_Y_OFFSET    = 30           # pixels below center
+BUTTON_HEIGHT           = 50
+BUTTON_GAP              = 65           # gap between Play Again and Main Menu
+
+# High scores panel
+TOP_N                 = 10
+HS_PANEL_X            = 635
+HS_PANEL_LEFT_PAD     = 10             # extends rect left of hs_x
+HS_PANEL_TOP          = 188
+HS_PANEL_SIZE         = 310
+HS_PANEL_RADIUS       = 6
+HS_HEADER_Y           = 195
+HS_LINE_Y             = 228
+HS_LINE_WIDTH         = 290
+HS_NAME_DISPLAY_LEN   = 11
+HS_NAME_TRUNC_LEN     = 10             # truncated to this + ellipsis
+HS_ROW_START_Y        = 236
+HS_ROW_HEIGHT         = 26
+HS_EMPTY_Y            = 136
 
 
 def run(screen, clock, score=0, high_score_table=None):

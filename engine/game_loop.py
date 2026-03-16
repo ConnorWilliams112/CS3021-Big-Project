@@ -23,8 +23,14 @@ from models.Duck import NormalDuck, SuperDuck
 from models.Gun import Gun
 from screens import overlay
 
-WIDTH, HEIGHT = 960, 540
-FPS = 60
+# MACROS
+WIDTH, HEIGHT      = 960, 540
+FPS                = 60
+FALLBACK_BG_COLOR  = (34, 85, 34)   # dark green
+SPAWN_INTERVAL_SEC = 3.0             # seconds between duck spawns
+SHOT_RECT_SIZE     = 10              # collision box size around cursor
+GUN_DISPLAY_POS    = (800, 10)
+AMMO_DISPLAY_POS   = (750, 10)
 
 _BG_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "Images")
 
@@ -55,7 +61,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
         bg  = pygame.transform.scale(raw, (WIDTH, HEIGHT))
     except Exception:
         bg = None
-    fallback_color = (34, 85, 34)
+    fallback_color = FALLBACK_BG_COLOR
 
     #Initialize the gun for the game
     gun = Gun(level.number)
@@ -69,7 +75,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
     # Pre-schedule duck spawns: one duck every 3 seconds
     spawn_queue: Queue = Queue()
     for i in range(level.duck_count):
-        spawn_queue.enqueue(i * 3.0)
+        spawn_queue.enqueue(i * SPAWN_INTERVAL_SEC)
 
     while True:
         clock.tick(FPS)
@@ -90,7 +96,7 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if gun.current_mag > 0:
                     mx, my    = pygame.mouse.get_pos()
-                    shot_rect = pygame.Rect(mx - 5, my - 5, 10, 10)
+                    shot_rect = pygame.Rect(mx - SHOT_RECT_SIZE // 2, my - SHOT_RECT_SIZE // 2, SHOT_RECT_SIZE, SHOT_RECT_SIZE)
                     hit_list  = [d for d in active_ducks if d.life and d.rect.colliderect(shot_rect)]
                     if hit_list:
                         for duck in hit_list:
@@ -132,8 +138,8 @@ def run(screen, clock, landscape: str = "forest", level: Level = None):
 
         #Update the gun display
         gun.update()
-        screen.blit(gun.image, (800, 10))
-        gun.render_ammo_display(screen, (750, 10))  #Display of ammo mag on screen
+        screen.blit(gun.image, GUN_DISPLAY_POS)
+        gun.render_ammo_display(screen, AMMO_DISPLAY_POS)  #Display of ammo mag on screen
         overlay.draw(
             screen,
             score          = score,
