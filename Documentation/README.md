@@ -27,16 +27,16 @@ Reload: 'R' or 'Space'
 # FILE ORGANIZATION
 duck_hunter/
 │
-├── main.py                  # Entry point. Creates GameManager, calls .run()
+├── main.py                  # Entry point. Creates GameManager, calls .run()             #####Don't have this, entry point is the game_engine
 │
 ├── engine/
 │   ├── __init__.py
-│   ├── game_manager.py      # OUTER LOOP — state machine cycling between screens
+│   ├── game_engine.py      # OUTER LOOP — state machine cycling between screens
 │   │                        # States: WELCOME, HUNT_SELECT, PLAYING, WIN, LOSE
 │   │                        # Owns the top-level pygame.init() and clock
 │   │
 │   ├── game_loop.py         # INNER LOOP — per-frame Pygame loop during active play
-│   │                        # Called by game_manager when state == PLAYING
+│   │                        # Called by game_engine when state == PLAYING
 │   │                        # Handles: event polling, update(), draw() each frame
 │   │                        # Owns: pygame.event.get(), frame timing
 │   │
@@ -53,29 +53,34 @@ duck_hunter/
 │   │                        # dead/alive flags, sprite animation)
 │   │                        # NormalDuck & SuperDuck subclasses via inheritance
 │   │
-│   ├── DuckDuckGo.py        # Main game file (pygame launch point)
+│   ├── DuckDuckGo.py        # Main game file (pygame launch point)                            ######Don't see this in the final version
 │   │
 │   ├── Gun.py               # Gun class: ammo, magazine, fire(), reload()
 │   │                        # fire() takes cursor pos, compares to duck hitbox → T/F
 │   │
-│   ├── Player.py            # Player state: name, current score, level reached
+│   ├── Player.py            # Player state: name, current score, level reached               ######Don't see this in the final version
 │   │
 │   ├── Images/              # Duck sprite assets (PNG with transparent backgrounds)
 │   │                        # Processing note: white backgrounds removed via PIL
+|   |                        # Images of landscape (Desert, Forest, Arctic)
 │   │                        # (see Image Processing Pipeline below)
+│   │ 
+│   ├── Sounds/              #Empty Click for gun
+│   │                        #Firing Sound for gun
+|   |                        #Reloading sound for gun
+│   │                        #Game Music
 │   │
 │   └── remove_white_background.py  # [ARCHIVE] One-time image processing script
 │                            # Removes white backgrounds from PNGs → transparency
 │                            # Kept for reference/future image reprocessing
 │
-├── gui/
-│   ├── __init__.py
-│   ├── screens/
+├── screens/
 │   │   ├── __init__.py
 │   │   ├── welcome_screen.py             # Logo, Play button, high score display, music toggle
 │   │   ├── landscape_selector_screen.py  # Landscape selector, rules popup, easter egg handler
 │   │   ├── countdown_screen.py           # "3...2...1...Go!" overlay
 │   │   ├── overlay.py                    # In-game overlay: ammo display, score, timer
+│   │   ├── intermediate_screen.py        # Screen between levels promppting user to continue or exit
 │   │   ├── win_screen.py                 # Stats display, name entry prompt if top 10
 │   │   └── lose_screen.py                # Laughing duck animation, return to menu
 │   │
@@ -92,7 +97,7 @@ duck_hunter/
 │   └── save_load.py         # JSON read/write for high scores
 │                            # hash_table ↔ dict ↔ JSON
 │
-└── tests/
+└── tests/                                                                                        #######Don't see as apart of final submission. Is apart of required techniques "Unittests"
     ├── __init__.py
     ├── test_queue.py
     ├── test_hash_table.py
