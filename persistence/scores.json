@@ -1,13 +1,8 @@
 [
   {
-    "name": "Curtis :)",
-    "score": 450,
-    "date": "2026-03-11"
-  },
-  {
-    "name": "Connor",
-    "score": 813,
-    "date": "2026-03-13"
+    "name": "Mike",
+    "score": 929,
+    "date": "2026-03-16"
   },
   {
     "name": "Owen",
@@ -20,8 +15,13 @@
     "date": "2026-03-12"
   },
   {
-    "name": "Mike",
-    "score": 833,
-    "date": "2026-03-15"
+    "name": "Connor",
+    "score": 813,
+    "date": "2026-03-13"
+  },
+  {
+    "name": "Curtis :)",
+    "score": 450,
+    "date": "2026-03-11"
   }
 ]

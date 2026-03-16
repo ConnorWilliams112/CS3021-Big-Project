@@ -8,7 +8,13 @@
 # ----------------------------------------------------------------------------------------
 
 
-MAX_LEVELS = 5
+# MACROS
+MAX_LEVELS                   = 5
+DUCK_COUNT_BASE              = 5     # starting duck count at level 1
+TIME_LIMIT_SEC               = 60
+POINT_THRESHOLD_PER_LEVEL    = 300
+SPECIAL_DUCK_CHANCE_PER_LEVEL = 0.15
+SPECIAL_DUCK_CHANCE_MAX      = 0.5
 
 
 class Level:
@@ -28,8 +34,8 @@ class Level:
 
     def __init__(self, number: int = 1):
         self.number              = max(1, min(number, MAX_LEVELS))
-        self.duck_count          = 5 + (self.number - 1) * 2          # 5, 7, 9, 11, 13
-        self.duck_speed          = self._DUCK_SPEEDS[self.number]      # 2, 3, 4, 6, 8
-        self.time_limit          = 60                                   # seconds per level
-        self.point_threshold     = self.number * 300                   # 300, 600, 900, …
-        self.special_duck_chance = min(0.15 * self.number, 0.5)        # caps at 50 %
+        self.duck_count          = DUCK_COUNT_BASE + (self.number - 1) * 2               # 5, 7, 9, 11, 13
+        self.duck_speed          = self._DUCK_SPEEDS[self.number]                        # 2, 3, 4, 6, 8
+        self.time_limit          = TIME_LIMIT_SEC
+        self.point_threshold     = self.number * POINT_THRESHOLD_PER_LEVEL              # 300, 600, 900, …
+        self.special_duck_chance = min(SPECIAL_DUCK_CHANCE_PER_LEVEL * self.number, SPECIAL_DUCK_CHANCE_MAX)
