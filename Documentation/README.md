@@ -30,7 +30,7 @@ duck_hunter/
 ├── main.py                  # Entry point. Creates GameManager, calls .run()             #####Don't have this, entry point is the game_engine
 │
 ├── engine/
-│   ├── __init__.py
+│   |
 │   ├── game_engine.py      # OUTER LOOP — state machine cycling between screens
 │   │                        # States: WELCOME, HUNT_SELECT, PLAYING, WIN, LOSE
 │   │                        # Owns the top-level pygame.init() and clock
@@ -47,32 +47,31 @@ duck_hunter/
 │   └── score.py             # Score logic: calc points, track hits/misses
 │                            # Interface between gameplay and persistence layer
 │
-├── models/
-│   ├── __init__.py
+├── models/        
+|   |
 │   ├── Duck.py              # Duck base class (position, speed, movement algo,
-│   │                        # dead/alive flags, sprite animation)
+│   │                        # dead/alive flags, sprite animation, etc.)
 │   │                        # NormalDuck & SuperDuck subclasses via inheritance
 │   │
-│   ├── DuckDuckGo.py        # Main game file (pygame launch point)                            ######Don't see this in the final version
+|   |
+│   ├── Models_Testbed.py    # Used instead of unit tests to check functionality of 
+|   |                        # Duck and Gun classes/sprites
 │   │
+|   |
 │   ├── Gun.py               # Gun class: ammo, magazine, fire(), reload()
 │   │                        # fire() takes cursor pos, compares to duck hitbox → T/F
 │   │
-│   ├── Player.py            # Player state: name, current score, level reached               ######Don't see this in the final version
 │   │
 │   ├── Images/              # Duck sprite assets (PNG with transparent backgrounds)
-│   │                        # Processing note: white backgrounds removed via PIL
-|   |                        # Images of landscape (Desert, Forest, Arctic)
-│   │                        # (see Image Processing Pipeline below)
+│   │                        # Gun sprites for various ammo levels
+|   |                        # Images of landscape (Desert, Forest, Arctic) 
 │   │ 
-│   ├── Sounds/              #Empty Click for gun
-│   │                        #Firing Sound for gun
-|   |                        #Reloading sound for gun
-│   │                        #Game Music
-│   │
-│   └── remove_white_background.py  # [ARCHIVE] One-time image processing script
-│                            # Removes white backgrounds from PNGs → transparency
-│                            # Kept for reference/future image reprocessing
+|   |
+│   └── Sounds/              #Empty Click for gun
+│                            #Firing Sound for gun
+|                            #Reloading sound for gun
+│                            #Game Music
+│    
 │
 ├── screens/
 │   │   ├── __init__.py

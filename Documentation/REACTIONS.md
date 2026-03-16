@@ -14,4 +14,5 @@ This was the first time we have worked on a team, large coding project with mult
 
 Successes - finishing the project was rewarding and was cool to find ways to implement each of the techniques we learned in class. When developing the HashTable, I had to dive deeper into collision handling, which was an interesting topic. I found chaining to be the easiest solution. When developing score.py, I had to do a decent amount of research into JSON persistence to make it work properly. Clear communication with Owen made it so we could then integrate the score.py module into the actual game, which was a stickier task than expected.
 
-# Connor Williams
+# Connor Williams        TO DO
+I enjoyed the project and it was the first chance I've had to work with a team on a larger, multi-module project like this. Early communication and decision making on what functionality belonged in what module proved to be very important and I think helped us considerably later on in the project. 
