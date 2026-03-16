@@ -1,13 +1,13 @@
 [
   {
+    "name": "Connor",
+    "score": 813,
+    "date": "2026-03-13"
+  },
+  {
     "name": "Mike",
     "score": 929,
     "date": "2026-03-16"
-  },
-  {
-    "name": "Owen",
-    "score": 1019,
-    "date": "2026-03-12"
   },
   {
     "name": "Player",
@@ -15,9 +15,9 @@
     "date": "2026-03-12"
   },
   {
-    "name": "Connor",
-    "score": 813,
-    "date": "2026-03-13"
+    "name": "Owen",
+    "score": 1019,
+    "date": "2026-03-12"
   },
   {
     "name": "Curtis :)",
